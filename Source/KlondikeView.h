@@ -20,7 +20,7 @@
 #define CARD_WIDTH 80
 #define CARD_HEIGHT 116
 #define CARDS_IN_DECK 52
-#define CARDS_IN_PLAY CARDS_IN_DECK*2
+#define CARDS_IN_PLAY CARDS_IN_DECK*1
 #define CARDS_IN_SUIT 13
 #define CARD_IMAGE_BACK 52
 #define CARD_IMAGE_EMPTY 53
@@ -34,6 +34,7 @@ enum effect { E_NONE, E_ALPHA25, E_ALPHA50, E_ALPHA75,
 typedef struct card {
 	short fValue;
 	short fColor;
+	bool fIsColorRed;
 	bool fRevealed;
 	short fEffect;
 	bool fInPlay;
@@ -56,7 +57,6 @@ public:
 	virtual void MouseUp(BPoint point);
 
 	void NewGame();
-	void ChangeDifficulty(int difficulty);
 	void Hint();
 	void Resize(float newWidth, float newHeight);
 
@@ -83,13 +83,14 @@ private:
 	int windowHeight;
 
 	card* fBoard[10]; // first card in each pile
-	short fStock; // number of stocks left
-	short fDealing; // the card that will become opaque next, -1 if none
+	card* fStock[24];
+	short fWasteCard;
+	bool fIsWasteCardPicked;
+	short fFoundations[4];
+	short fFoundationsColors[4];
 	short fStacking; // the pile that is stacking, -1 if none
 	short fStackingCard; // the card in the pile that will stack next, -1 if none
 	card* fAllCards[CARDS_IN_PLAY]; // all cards
-
-	int fColors; // difficulty
 
 	short fPickedCardBoardPos; // pile picked card is from
 	card* fPickedCard;

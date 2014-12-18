@@ -55,10 +55,6 @@ void KlondikeWindow::MessageReceived(BMessage* message)
 			B_WIDTH_AS_USUAL, B_IDEA_ALERT);
 		question->Go(fDiffSet);
 		break;
-	case kDiffChosenMessage:
-		message->FindInt32("which", &response);
-		fView->ChangeDifficulty(response);
-		break;
 	case kHintMessage:
 		fView->Hint();
 		break;
@@ -87,10 +83,6 @@ BMenuBar* KlondikeWindow::_CreateMenuBar()
 	menuItem = new BMenuItem(B_TRANSLATE("New game"), new BMessage(kNewGameMessage));
 	menuItem->SetShortcut('N', B_COMMAND_KEY);
 	mGame->AddItem(menuItem);
-	
-	menuItem = new BMenuItem(B_TRANSLATE("Change difficulty"), new BMessage(kDifficultyMessage));
-	menuItem->SetShortcut('D', B_COMMAND_KEY);
-	mOptions->AddItem(menuItem);
 	
 	menuItem = new BMenuItem(B_TRANSLATE_CONTEXT("Hint", "Menu bar"), new BMessage(kHintMessage));
 	menuItem->SetShortcut('H', B_COMMAND_KEY);
