@@ -2,8 +2,8 @@
  * Copyright 2013 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
-#ifndef _SPIDERVIEW_H_
-#define _SPIDERVIEW_H_
+#ifndef _KLONDIKEVIEW_H_
+#define _KLONDIKEVIEW_H_
 
 
 #include <Bitmap.h>
@@ -42,10 +42,10 @@ typedef struct card {
 } card;
 
 
-class SpiderView : public BView {
+class KlondikeView : public BView {
 public:
-	SpiderView();
-	~SpiderView();
+	KlondikeView();
+	~KlondikeView();
 
 	virtual void AllAttached();
 	virtual void Draw(BRect rect);
@@ -108,4 +108,4 @@ private:
 	int fMoves;
 };
 
-#endif // _SPIDERVIEW_H_
+#endif // _KLONDIKEVIEW_H_

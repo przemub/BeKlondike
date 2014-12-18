@@ -7,7 +7,7 @@
 ## Application Specific Settings ---------------------------------------------
 
 # specify the name of the binary
-NAME=BeSpider
+NAME=BeKlondike
 
 # specify the type of binary
 #	APP:	Application
@@ -18,7 +18,7 @@ TYPE=APP
 
 # 	if you plan to use localization features
 # 	specify the application MIME siganture
-APP_MIME_SIG=application/x-vnd.przemub.BeSpider
+APP_MIME_SIG=application/x-vnd.przemub.BeKlondike
 
 #	add support for new Pe and Eddie features
 #	to fill in generic makefile
@@ -34,12 +34,12 @@ APP_MIME_SIG=application/x-vnd.przemub.BeSpider
 #	if two source files with the same name (source.c or source.cpp)
 #	are included from different directories.  Also note that spaces
 #	in folder names do not work well with this makefile.
-SRCS=Source/SpiderApplication.cpp Source/SpiderView.cpp \
-	Source/SpiderWindow.cpp
+SRCS=Source/KlondikeApplication.cpp Source/KlondikeView.cpp \
+	Source/KlondikeWindow.cpp
 
 #	specify the resource definition files to use
 #	full path or a relative path to the resource file can be used.
-RDEFS=Source/BeSpider.rdef
+RDEFS=Source/BeKlondike.rdef
 
 #	specify the resource files to use.
 #	full path or a relative path to the resource file can be used.

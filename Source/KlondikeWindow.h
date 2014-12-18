@@ -2,10 +2,10 @@
  * Copyright 2013 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
-#ifndef _SPIDERWINDOW_H_
-#define _SPIDERWINDOW_H__
+#ifndef _KLONDIKEWINDOW_H_
+#define _KLONDIKEWINDOW_H__
 
-#include "SpiderView.h"
+#include "KlondikeView.h"
 
 #include <Invoker.h>
 #include <Window.h>
@@ -17,9 +17,9 @@ const int32 kDiffChosenMessage = 'DiCh';
 const int32 kHintMessage = 'Hint';
 
 
-class SpiderWindow : public BWindow {
+class KlondikeWindow : public BWindow {
 public:
-	SpiderWindow(BRect frame, const char* title);
+	KlondikeWindow(BRect frame, const char* title);
 
 	virtual void MessageReceived(BMessage* message);
 	virtual void FrameResized(float newWidth, float newHeight);
@@ -27,8 +27,8 @@ public:
 private:
 	BMenuBar* _CreateMenuBar();
 
-	SpiderView* fView;
+	KlondikeView* fView;
 	BInvoker* fDiffSet;
 };
 
-#endif	// _SPIDERWINDOW_H_
+#endif	// _KLONDIKEWINDOW_H_

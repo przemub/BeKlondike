@@ -2,9 +2,9 @@
  * Copyright 2013 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
-#include "SpiderWindow.h"
+#include "KlondikeWindow.h"
 
-#include "SpiderView.h"
+#include "KlondikeView.h"
 
 #include <Alert.h>
 #include <Application.h>
@@ -14,15 +14,15 @@
 #include <MenuItem.h>
 
 #undef B_TRANSLATION_CONTEXT
-#define B_TRANSLATION_CONTEXT "BeSpider"
+#define B_TRANSLATION_CONTEXT "BeKlondike"
 
 
-SpiderWindow::SpiderWindow(BRect frame, const char* title)
+KlondikeWindow::KlondikeWindow(BRect frame, const char* title)
 	:
 	BWindow(frame, title, B_DOCUMENT_WINDOW,
 	B_QUIT_ON_WINDOW_CLOSE)
 {
-	fView = new SpiderView();
+	fView = new KlondikeView();
 	fDiffSet = new BInvoker(new BMessage(kDiffChosenMessage), this);
 	
 	SetPulseRate(500000);
@@ -33,13 +33,13 @@ SpiderWindow::SpiderWindow(BRect frame, const char* title)
 }
 
 
-void SpiderWindow::FrameResized(float newWidth, float newHeight)
+void KlondikeWindow::FrameResized(float newWidth, float newHeight)
 {
 	fView->Resize(newWidth, newHeight);
 }
 
 
-void SpiderWindow::MessageReceived(BMessage* message)
+void KlondikeWindow::MessageReceived(BMessage* message)
 {
 	BAlert* question;
 	int32 response;
@@ -75,7 +75,7 @@ void SpiderWindow::MessageReceived(BMessage* message)
 }
 
 
-BMenuBar* SpiderWindow::_CreateMenuBar()
+BMenuBar* KlondikeWindow::_CreateMenuBar()
 {
 	BMenuBar* menuBar = new BMenuBar("MenuBar");
 	BMenu* mGame = new BMenu(B_TRANSLATE("Game"));

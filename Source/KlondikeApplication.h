@@ -2,25 +2,25 @@
  * Copyright 2013 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
-#ifndef _SPIDERAPPLICATION_H_
-#define _SPIDERAPPLICATION_H_
+#ifndef _KLONDIKEAPPLICATION_H_
+#define _KLONDIKEAPPLICATION_H_
 
 
 #include <Application.h>
 
 
-class SpiderWindow;
+class KlondikeWindow;
 
 
-class SpiderApplication : public BApplication {
+class KlondikeApplication : public BApplication {
 public:
-	SpiderApplication();
+	KlondikeApplication();
 
 	virtual void AboutRequested();
 
 private:
-	SpiderWindow* fWindow;
+	KlondikeWindow* fWindow;
 };
 
 
-#endif	// _SPIDERAPPLICATION_H_
+#endif	// _KLONDIKEAPPLICATION_H_

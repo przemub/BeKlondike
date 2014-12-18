@@ -1,5 +1,5 @@
 
-resource app_signature "application/x-vnd.przemub.BeSpider";
+resource app_signature "application/x-vnd.przemub.BeKlondike";
 
 resource app_version {
 	major  = 0,
@@ -9,8 +9,8 @@ resource app_version {
 	variety = B_APPV_BETA,
 	internal = 0,
 
-	short_info = "BeSpider",
-	long_info = "Spider Solitaire for Haiku."
+	short_info = "BeKlondike",
+	long_info = "Klondike Solitaire for Haiku."
 };
 
 resource(2, "Artwork/1_club.png")       #'rGFX' import "../Artwork/1_club.png" ;

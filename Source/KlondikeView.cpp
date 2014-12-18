@@ -2,7 +2,7 @@
  * Copyright 2013 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
-#include "SpiderView.h"
+#include "KlondikeView.h"
 
 #include <Alert.h>
 #include <Application.h>
@@ -18,12 +18,12 @@
 #include <time.h>
 
 #undef B_TRANSLATION_CONTEXT
-#define B_TRANSLATION_CONTEXT "BeSpider"
+#define B_TRANSLATION_CONTEXT "BeKlondike"
 
 
-SpiderView::SpiderView()
+KlondikeView::KlondikeView()
 	:
-	BView(BRect(0, 0, STARTING_WINDOW_WIDTH+10, STARTING_WINDOW_HEIGHT+10), "SpiderView",
+	BView(BRect(0, 0, STARTING_WINDOW_WIDTH+10, STARTING_WINDOW_HEIGHT+10), "KlondikeView",
 		B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_PULSE_NEEDED | B_FULL_UPDATE_ON_RESIZE)
 {
 	SetViewColor(0, 85, 0);
@@ -41,7 +41,7 @@ SpiderView::SpiderView()
 }
 
 
-SpiderView::~SpiderView()
+KlondikeView::~KlondikeView()
 {
 	delete fShuffle;
 	delete fFanfare;
@@ -55,13 +55,13 @@ SpiderView::~SpiderView()
 }
 
 
-void SpiderView::AllAttached()
+void KlondikeView::AllAttached()
 {
 	_GenerateBoard();
 }
 
 
-void SpiderView::Draw(BRect rect)
+void KlondikeView::Draw(BRect rect)
 {
 	//clock_t start, end;
 	//start = clock();
@@ -171,7 +171,7 @@ void SpiderView::Draw(BRect rect)
 }
 
 
-void SpiderView::Pulse()
+void KlondikeView::Pulse()
 {
 	if (fDealing > 9) {
 		fDealing = -1;
@@ -258,7 +258,7 @@ void SpiderView::Pulse()
 }
 
 
-void SpiderView::Resize(float newWidth, float newHeight)
+void KlondikeView::Resize(float newWidth, float newHeight)
 {
 	ResizeTo(newWidth, newHeight-20);
 	windowWidth = (int)newWidth - 20;
@@ -266,7 +266,7 @@ void SpiderView::Resize(float newWidth, float newHeight)
 }
 
 
-void SpiderView::MouseDown(BPoint point)
+void KlondikeView::MouseDown(BPoint point)
 {
 	if (fDealing != -1 || fIsHintShown != -1 || fStacking != -1 || fMouseLock)
 		return;
@@ -386,7 +386,7 @@ void SpiderView::MouseDown(BPoint point)
 }
 
 
-void SpiderView::MouseMoved(BPoint point,
+void KlondikeView::MouseMoved(BPoint point,
 	uint32 transit, const BMessage* message)
 {
 	/*if (transit == B_EXITED_VIEW) {
@@ -396,7 +396,7 @@ void SpiderView::MouseMoved(BPoint point,
 }
 
 
-void SpiderView::MouseUp(BPoint point)
+void KlondikeView::MouseUp(BPoint point)
 {
 	if (fIsCardPicked) {
 		int hSpacing = _CardHSpacing();
@@ -428,20 +428,20 @@ void SpiderView::MouseUp(BPoint point)
 }
 
 
-void SpiderView::NewGame()
+void KlondikeView::NewGame()
 {
 	_GenerateBoard();
 	Invalidate();
 }
 
 
-int SpiderView::_CardHSpacing()
+int KlondikeView::_CardHSpacing()
 {
 	return((windowWidth - (CARD_WIDTH*10)) / 11);
 }
 
 
-void SpiderView::ChangeDifficulty(int difficulty)
+void KlondikeView::ChangeDifficulty(int difficulty)
 {
 	switch (difficulty) {
 	default:
@@ -459,7 +459,7 @@ void SpiderView::ChangeDifficulty(int difficulty)
 }
 
 
-void SpiderView::Hint()
+void KlondikeView::Hint()
 {
 	if (fIsHintShown != -1 || fDealing != -1)
 		return;
@@ -528,7 +528,7 @@ void SpiderView::Hint()
 }
 
 
-BSimpleGameSound* SpiderView::_LoadSound(const char* resourceName)
+BSimpleGameSound* KlondikeView::_LoadSound(const char* resourceName)
 {
 	size_t size;
 	const void* data = fResources->LoadResource('rSFX', resourceName, &size);
@@ -553,7 +553,7 @@ BSimpleGameSound* SpiderView::_LoadSound(const char* resourceName)
 }
 
 
-void SpiderView::_LoadBitmaps()
+void KlondikeView::_LoadBitmaps()
 {
 	BString suits[] = {
 		"spade",
@@ -608,7 +608,7 @@ void SpiderView::_LoadBitmaps()
 }
 
 
-card* SpiderView::_PickRandomCard()
+card* KlondikeView::_PickRandomCard()
 {
 	for(short i = 0; i < CARDS_IN_PLAY; i++) {
 		if(fAllCards[i]->fInPlay == false) { // if card not in play
@@ -621,7 +621,7 @@ card* SpiderView::_PickRandomCard()
 }
 
 
-void SpiderView::_AddCardToPile(int pile, card* cardToAdd) {
+void KlondikeView::_AddCardToPile(int pile, card* cardToAdd) {
 	if(fBoard[pile] == NULL) {
 		fBoard[pile] = cardToAdd;
 	} else {
@@ -631,7 +631,7 @@ void SpiderView::_AddCardToPile(int pile, card* cardToAdd) {
 }
 
 
-void SpiderView::_RemoveCardFromPile(int pile, card* cardToRemove) {
+void KlondikeView::_RemoveCardFromPile(int pile, card* cardToRemove) {
 	if(fBoard[pile] == cardToRemove) { // first in pile
 		fBoard[pile] = NULL;
 	} else { // second or later in pile
@@ -641,7 +641,7 @@ void SpiderView::_RemoveCardFromPile(int pile, card* cardToRemove) {
 }
 
 
-void SpiderView::_GenerateBoard()
+void KlondikeView::_GenerateBoard()
 {
 	srand(time(NULL));
 	
@@ -710,7 +710,7 @@ void SpiderView::_GenerateBoard()
 }
 
 
-void SpiderView::_CheckBoard()
+void KlondikeView::_CheckBoard()
 {
 	for (short i = 0; i != 10; i++) {
 		short needed = 0;
@@ -756,7 +756,7 @@ void SpiderView::_CheckBoard()
 }
 
 
-card* SpiderView::_FindLastUsed(short stock) {
+card* KlondikeView::_FindLastUsed(short stock) {
 	card* currentCard = fBoard[stock];
 	if(currentCard == NULL)
 		return NULL;
