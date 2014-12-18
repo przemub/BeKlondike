@@ -52,8 +52,6 @@ public:
 	virtual void Draw(BRect rect);
 	virtual void Pulse();
 	virtual void MouseDown(BPoint point);
-	virtual void MouseMoved(BPoint point,
-		uint32 transit, const BMessage* message);
 	virtual void MouseUp(BPoint point);
 
 	void NewGame();
@@ -88,8 +86,6 @@ private:
 	bool fIsWasteCardPicked;
 	short fFoundations[4];
 	short fFoundationsColors[4];
-	short fStacking; // the pile that is stacking, -1 if none
-	short fStackingCard; // the card in the pile that will stack next, -1 if none
 	card* fAllCards[CARDS_IN_PLAY]; // all cards
 
 	short fPickedCardBoardPos; // pile picked card is from
@@ -100,13 +96,7 @@ private:
 	short fIsHintShown;
 	card* fHints[2];
 	short fHintStatus[2];
-	short fNoMoves;
 
-	short fStacked;
-	short fStackedColor[8];
-
-	int fPoints;
-	int fMoves;
-};
+	int fPoints;};
 
 #endif // _KLONDIKEVIEW_H_
