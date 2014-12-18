@@ -1,23 +1,25 @@
-1	English	application/x-vnd.przemub.BeSpider	1849784333
-New game	BeSpider		New game
-Licensed under Creative Commons Attribution 3.0.	BeSpider		Licensed under Creative Commons Attribution 3.0.
+1	English	application/x-vnd.przemub.BeKlondike	3751091635
+Easy (1 color)	BeKlondike		Easy (1 color)
+Licensed under GNU Lesser General Public License 2.1.	BeKlondike		Licensed under GNU Lesser General Public License 2.1.
+there are no constructive moves!	BeKlondike		there are no constructive moves!
+A klondike solitaire clone for Haiku.	BeKlondike		A klondike solitaire clone for Haiku.
+BeKlondike (c) 2013-14 Przemysław Buczkowski <przemub@przemub.pl>	BeKlondike		BeKlondike (c) 2013-14 Przemysław Buczkowski <przemub@przemub.pl>
 Quit	Menu bar		Quit
-moves	BeSpider		moves
+About…	Menu bar		About…
+Options	BeKlondike		Options
 Hint	Menu bar		Hint
-Change difficulty	BeSpider		Change difficulty
-Medium (2 colors)	BeSpider		Medium (2 colors)
+Hard (4 colors)	BeKlondike		Hard (4 colors)
+Fanfare sound (c) 2009 Anthony Batiste.	BeKlondike		Fanfare sound (c) 2009 Anthony Batiste.
+Change difficulty	BeKlondike		Change difficulty
 OK!	Win alert		OK!
-there are no constructive moves!	BeSpider		there are no constructive moves!
+Licensed under Creative Commons Attribution 3.0.	BeKlondike		Licensed under Creative Commons Attribution 3.0.
 OK	About alert		OK
-Fanfare sound (c) 2009 Anthony Batiste	BeSpider		Fanfare sound (c) 2009 Anthony Batiste
-Licensed under GNU Lesser General Public License 2.1.	BeSpider		Licensed under GNU Lesser General Public License 2.1.
-Easy (1 color)	BeSpider		Easy (1 color)
-SVG-Z-cards (c) 2008 David Bellot, Brandon Ardiente	BeSpider		SVG-Z-cards (c) 2008 David Bellot, Brandon Ardiente
-YOU WON!	BeSpider		YOU WON!
-points	BeSpider		points
-a spider solitaire clone for Haiku	BeSpider		a spider solitaire clone for Haiku
-About	Menu bar		About
-BeSpider (c) 2013 Przemysław Buczkowski <przemub@przemub.pl>	BeSpider		BeSpider (c) 2013 Przemysław Buczkowski <przemub@przemub.pl>
-Choose difficulty level.	BeSpider		Choose difficulty level.
-Distributed under the terms of the MIT license.	BeSpider		Distributed under the terms of the MIT license.
-Hard (4 colors)	BeSpider		Hard (4 colors)
+Distributed under the terms of the MIT license.	BeKlondike		Distributed under the terms of the MIT license.
+moves	BeKlondike		moves
+SVG-Z-cards (c) 2008 David Bellot, Brandon Ardiente.	BeKlondike		SVG-Z-cards (c) 2008 David Bellot, Brandon Ardiente.
+New game	BeKlondike		New game
+Game	BeKlondike		Game
+YOU WON!	BeKlondike		YOU WON!
+Medium (2 colors)	BeKlondike		Medium (2 colors)
+points	BeKlondike		points
+Choose difficulty level.	BeKlondike		Choose difficulty level.
