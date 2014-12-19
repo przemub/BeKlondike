@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Przemysław Buczkowski <przemub@przemub.pl>
+ * Copyright 2013-14 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
 #include "KlondikeWindow.h"
@@ -47,6 +47,9 @@ void KlondikeWindow::MessageReceived(BMessage* message)
 	case kCheatMessage:
 		fView->Cheat();
 		break;
+	case kAutoMoveMessage:
+		fView->MoveAllToFoundations();
+		break;
 	case 'DATA':
 		if(message->WasDropped()) {
 			fView->MouseUp(message->DropPoint());
@@ -77,6 +80,11 @@ BMenuBar* KlondikeWindow::_CreateMenuBar()
 		new BMessage(B_ABOUT_REQUESTED));
 	about->SetTarget(be_app);
 	mGame->AddItem(about);
+	mGame->AddSeparatorItem();
+	
+	menuItem = new BMenuItem(B_TRANSLATE("Auto-move"), new BMessage(kAutoMoveMessage));
+	menuItem->SetShortcut('A', B_COMMAND_KEY);
+	mGame->AddItem(menuItem);
 	mGame->AddSeparatorItem();
 	
 	menuItem = new BMenuItem(B_TRANSLATE_CONTEXT("Quit", "Menu bar"), new BMessage(B_QUIT_REQUESTED));

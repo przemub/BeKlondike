@@ -254,10 +254,17 @@ void KlondikeView::Resize(float newWidth, float newHeight)
 
 void KlondikeView::MouseDown(BPoint point)
 {
-	
 	if (fMouseLock)
 		return;
 	fMouseLock = true;
+	
+	uint32 mouse;
+	GetMouse(&point, &mouse);
+	
+	if (mouse == B_SECONDARY_MOUSE_BUTTON) {
+		MoveAllToFoundations();
+		return;
+	}
 
 	int hSpacing = _CardHSpacing();
 	
@@ -778,6 +785,122 @@ void KlondikeView::_CheckBoard() {
 	
 	fMouseLock = true;
 	fWon = true;
+}
+
+
+void KlondikeView::MoveAllToFoundations() {
+	bool found;
+	
+	do {
+		found = _MoveWasteToFoundations();	
+		
+		for (short i = 0; i < 7; i++) {
+			if (fBoard[i] == NULL)
+				continue;
+			
+			card* currentCard = _FindLastUsed(i);
+			short color = currentCard->fColor;
+			short value = currentCard->fValue;
+			short foundation = -1;
+			
+			if (value == 0) {
+				for (short j = 0; j < 4; j++) {
+					if (fFoundationsColors[j] == -1) {
+						fFoundationsColors[j] = color;
+						fFoundations[j] = 0;
+						
+						if (currentCard->fPrevCard != NULL)
+							currentCard->fPrevCard->fRevealed = true;
+						_RemoveCardFromPile(i, currentCard);
+						fPoints += 10;
+						found = true;
+						
+						break;
+					}
+				}
+				
+				continue;
+			}
+			
+			for (short j = 0; j < 4; j++) {
+				if (fFoundationsColors[j] == color) {
+					foundation = j;
+					fFoundationsColors[j] = color;
+					break;
+				}
+			}
+					
+			if (foundation == -1)
+				continue;
+			
+			if (value - fFoundations[foundation] == 1) {
+				if (currentCard->fPrevCard != NULL)
+					currentCard->fPrevCard->fRevealed = true;
+				_RemoveCardFromPile(i, currentCard);
+				fFoundations[foundation]++;
+				fPoints += 10;
+				found = true;
+			}
+		}
+	} while (found);
+	
+	_CheckBoard();
+	Invalidate();
+}
+
+
+bool KlondikeView::_MoveWasteToFoundations() {
+	if (fWasteCard == -1)
+		return false;
+	
+	card* currentCard = fStock[fWasteCard];
+	short color = currentCard->fColor;
+	short value = currentCard->fValue;
+	short foundation = -1;
+	
+	if (value == 0) {
+		for (short j = 0; j < 4; j++) {
+			if (fFoundationsColors[j] == -1) {
+				fFoundationsColors[j] = color;
+				fFoundations[j] = 0;
+				
+				currentCard->fRevealed = true;
+				fWasteCard--;
+				while (fWasteCard != -1 && fStock[fWasteCard]->fRevealed)
+					fWasteCard--;
+				fPoints += 10;
+									
+				break;
+			}
+		}
+		
+		return true;
+	}
+	
+	for (short j = 0; j < 4; j++) {
+		if (fFoundationsColors[j] == color) {
+			foundation = j;
+			fFoundationsColors[j] = color;
+			break;
+		}
+	}
+			
+	if (foundation == -1)
+		return false;
+	
+	fprintf(stderr, "%d\n", value - fFoundations[foundation]);
+	if (value - fFoundations[foundation] == 1) {
+		currentCard->fRevealed = true;
+		fWasteCard--;
+		while (fWasteCard != -1 && fStock[fWasteCard]->fRevealed)
+			fWasteCard--;
+		fFoundations[foundation]++;
+		fPoints += 10;
+		
+		return true;
+	}
+	
+	return false;
 }
 
 

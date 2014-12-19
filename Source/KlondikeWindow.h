@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Przemysław Buczkowski <przemub@przemub.pl>
+ * Copyright 2013-14 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
 #ifndef _KLONDIKEWINDOW_H_
@@ -13,6 +13,7 @@
 
 const int32 kNewGameMessage = 'NewG';
 const int32 kCheatMessage = 'Chtr';
+const int32 kAutoMoveMessage = 'Auto';
 
 
 class KlondikeWindow : public BWindow {

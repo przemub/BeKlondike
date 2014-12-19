@@ -56,6 +56,7 @@ public:
 
 	void NewGame();
 	void Cheat();
+	void MoveAllToFoundations();
 	void Resize(float newWidth, float newHeight);
 
 private:
@@ -63,6 +64,7 @@ private:
 	void _LoadBitmaps();
 	void _GenerateBoard();
 	void _CheckBoard();
+	bool _MoveWasteToFoundations();
 	int _CardHSpacing();
 	card* _FindLastUsed(short stock);
 	card* _PickRandomCard();
