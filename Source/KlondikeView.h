@@ -87,6 +87,7 @@ private:
 	bool fIsWasteCardPicked;
 	short fFoundations[4];
 	short fFoundationsColors[4];
+	bool fIsFoundationCardPicked;
 	card* fAllCards[CARDS_IN_PLAY]; // all cards
 
 	bool fWon;

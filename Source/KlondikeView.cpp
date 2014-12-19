@@ -320,6 +320,39 @@ void KlondikeView::MouseDown(BPoint point)
 		
 		return;
 	}
+	
+	// pick up a card from a foundation
+	if (stack > 2 && stack < 7 && point.y < 15 + CARD_HEIGHT) {
+		short foundation = stack-3;
+		short value = fFoundations[foundation];
+		short color = fFoundationsColors[foundation];
+		
+		if (fFoundations[foundation] == -1)
+			return;
+		
+		// find picked card
+		for (short i = 0; i < CARDS_IN_DECK; i++) {
+			if (fAllCards[i]->fValue == value &&
+				fAllCards[i]->fColor == color)
+			fPickedCard = fAllCards[i];
+		}
+		
+		BMessage msg(B_SIMPLE_DATA);
+		msg.AddPointer("view", this);
+		BBitmap* img = new BBitmap(fCards[fPickedCard->fColor*CARDS_IN_SUIT+fPickedCard->fValue]);
+		
+		fIsFoundationCardPicked = true;
+		fPickedCardBoardPos = foundation;
+		fFoundations[foundation]--;
+		
+		DragMessage(&msg, img, B_OP_BLEND,
+			BPoint((int)(point.x - hSpacing) % (CARD_WIDTH + hSpacing),
+			point.y - 15));
+		
+		Invalidate();
+		
+		return;
+	}
 
 	// pick up a stack
 	if (stack <= 9 && fBoard[stack] != NULL) {
@@ -483,16 +516,42 @@ void KlondikeView::MouseUp(BPoint point)
 		
 		else if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL ||
 				_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1)) {
-			// attach to stack
-			_AddCardToPile(stack, fPickedCard);
+			// attach to stack, only kings on empty fields
+			if (!(fPickedCard-> fValue != 12 && fBoard[stack] == NULL)) {
+				_AddCardToPile(stack, fPickedCard);
 			
-			fPickedCard->fRevealed = true;
-			fWasteCard--;
+				fPickedCard->fRevealed = true;
+				fWasteCard--;
 			
-			fPoints += 5;
+				fPoints += 5;
+			}
 		}
 
 		fIsWasteCardPicked = false;
+
+		Invalidate();
+	}
+	
+	if (fIsFoundationCardPicked) {
+		int hSpacing = _CardHSpacing();
+		short stack = (int)((point.x - hSpacing) / (CARD_WIDTH + hSpacing));
+		
+		if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL ||
+				_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1)) {
+			// attach to stack
+			_AddCardToPile(stack, fPickedCard);
+			
+			if (fFoundations[fPickedCardBoardPos] == -1)
+				fFoundationsColors[fPickedCardBoardPos] = -1;
+			
+			fPoints -= 15;
+			if (fPoints < 0)
+				fPoints = 0;
+		} else {
+			fFoundations[fPickedCardBoardPos]++;
+		}
+
+		fIsFoundationCardPicked = false;
 
 		Invalidate();
 	}
