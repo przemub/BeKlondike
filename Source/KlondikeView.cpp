@@ -274,7 +274,8 @@ void KlondikeView::MouseDown(BPoint point)
 		return;
 	
 	// stock
-	if (stack == 0 && point.y < 15 + CARD_HEIGHT && point.y > 15) {
+	if (point.y < 15 + CARD_HEIGHT && point.y > 15 &&
+		stack == 0 && point.x > hSpacing) {
 		int revealed = 0;
 		for (short i = 0; i < 24; i++)
 			if (fStock[i]->fRevealed)
@@ -348,12 +349,13 @@ void KlondikeView::MouseDown(BPoint point)
 	}
 
 	// pick up a stack
-	if (stack <= 9 && fBoard[stack] != NULL) {
+	if (stack < 7 && fBoard[stack] != NULL &&
+		point.x > hSpacing && point.y > 2*15 + CARD_HEIGHT) {
 		// find clicked on card
 		int cardNumber = 1;
 		card* picked = fBoard[stack];
 		while(picked->fNextCard != NULL) {
-			if(point.y - 15 * cardNumber - 131 < 15) {
+			if(point.y - 15 * cardNumber - CARD_HEIGHT - 15 < 15) {
 				break;
 			}
 			picked = picked->fNextCard;
@@ -361,7 +363,7 @@ void KlondikeView::MouseDown(BPoint point)
 		}
 		if(picked->fNextCard == NULL) {
 			// on last card, if below than not clicking on card
-			if(point.y - 15 * cardNumber - 131 >= CARD_HEIGHT) {
+			if(point.y - 15 * cardNumber - CARD_HEIGHT - 15 >= CARD_HEIGHT) {
 				return;
 			}
 		}
