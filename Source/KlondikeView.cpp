@@ -106,7 +106,7 @@ void KlondikeView::Draw(BRect rect)
 			fWasteCard = -1;
 			
 			fPoints -= 100;
-			if (fPoints < 100)
+			if (fPoints < 0)
 				fPoints = 0;
 			
 			Invalidate();
@@ -119,7 +119,7 @@ void KlondikeView::Draw(BRect rect)
 				fWasteCard = -1;
 				
 				fPoints -= 100;
-				if (fPoints < 100)
+				if (fPoints < 0)
 					fPoints = 0;
 				
 				break;
@@ -284,7 +284,7 @@ void KlondikeView::MouseDown(BPoint point)
 			fWasteCard = -1;
 			
 			fPoints -= 100;
-			if (fPoints < 100)
+			if (fPoints < 0)
 				fPoints = 0;
 		}
 		
@@ -752,7 +752,7 @@ void KlondikeView::_GenerateBoard()
 		fFoundationsColors[i] = -1;
 	}
 
-	fPoints = 0;
+	fPoints = 100;
 
 	short cardsOnPile = 1;
 	for (short i = 0; i != 7; i++) {
