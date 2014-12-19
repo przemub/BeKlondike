@@ -60,13 +60,31 @@ void KlondikeView::AllAttached()
 
 void KlondikeView::Draw(BRect rect)
 {
+	
 	SetDrawingMode(B_OP_ALPHA);
 	
 	int hSpacing = _CardHSpacing();
 	
-	DrawBitmap(fBack[0], BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
+	// stock
+	int revealed = 0;
+	int lastRevealed = 0;
+	for (short i = 0; i < 24; i++)
+		if (fStock[i]->fRevealed) {
+			revealed++;
+			lastRevealed = i;	
+		}
 	
-	// stock and waste
+	if (revealed < 23)
+		DrawBitmap(fBack[0], BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
+	else if (revealed == 23) {
+		fStock[fWasteCard]->fRevealed = true;
+		fWasteCard = lastRevealed;
+		DrawBitmap(fEmpty, BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
+	}
+	else
+		DrawBitmap(fEmpty, BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
+	
+	// waste
 	if (fIsWasteCardPicked) {
 		int lastWasteCard = fWasteCard - 1;
 		
@@ -196,6 +214,10 @@ void KlondikeView::Draw(BRect rect)
 	BString points = BString();
 	points << fPoints;
 
+	BFont biggerFont = BFont();
+	biggerFont.SetFace(B_BOLD_FACE);
+	biggerFont.SetSize(20);
+
 	BFont bigFont = BFont();
 	bigFont.SetFace(B_BOLD_FACE);
 	bigFont.SetSize(18);
@@ -211,6 +233,13 @@ void KlondikeView::Draw(BRect rect)
 	SetFont(&smallFont);
 	DrawString(B_TRANSLATE("points"), BPoint((windowWidth+10
 		- smallFont.StringWidth(B_TRANSLATE("points"))) / 2, windowHeight));
+	
+	if (fWon) {
+		SetHighColor(255,0,0);
+		SetFont(&biggerFont);
+		DrawString(B_TRANSLATE("YOU WON"), BPoint((windowWidth + 10
+			- biggerFont.StringWidth(B_TRANSLATE("YOU WON"))) / 2, windowHeight - 40));
+	}
 }
 
 
@@ -405,14 +434,19 @@ void KlondikeView::MouseUp(BPoint point)
 		else if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL ||
 				_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1) &&
 				fIsCardPicked) {
-			// attach to stack
-			_AddCardToPile(stack, fPickedCard);
+			// attach to stack, only kings on empty fields
+			if (!(fPickedCard-> fValue != 12 && fBoard[stack] == NULL)) {
+				_AddCardToPile(stack, fPickedCard);
 			
-			// reveal last card from pile the cards were from
-			if(_FindLastUsed(fPickedCardBoardPos) != NULL) {
-				_FindLastUsed(fPickedCardBoardPos)->fRevealed = true;
-				fPoints += 5;
-			}
+				// reveal last card from pile the cards were from
+				if(_FindLastUsed(fPickedCardBoardPos) != NULL) {
+					_FindLastUsed(fPickedCardBoardPos)->fRevealed = true;
+					
+					if (stack != fPickedCardBoardPos)
+						fPoints += 5;
+				}
+			} else
+				_AddCardToPile(fPickedCardBoardPos, fPickedCard);
 		} else {
 			// reattach to old stack
 			_AddCardToPile(fPickedCardBoardPos, fPickedCard);
@@ -547,6 +581,25 @@ void KlondikeView::Hint()
 	Invalidate();
 }
 
+
+void KlondikeView::Cheat() {
+	for (short i = 0; i < 4; i++) {
+		fFoundationsColors[i] = i;
+		fFoundations[i] = 12;
+	}
+	
+	for (short i = 0; i < 7; i++) {
+		_RemoveCardFromPile(i, fBoard[i]);
+	}
+	
+	for (short i = 0; i < 24; i++) {
+		fStock[i]->fRevealed = true;
+	}
+	
+	Invalidate();
+	
+	_CheckBoard();
+}
 
 BSimpleGameSound* KlondikeView::_LoadSound(const char* resourceName)
 {
@@ -705,6 +758,7 @@ void KlondikeView::_GenerateBoard()
 	fMouseLock = false;
 	fHintStatus[0] = 0;
 	fHintStatus[1] = 0;
+	fWon = false;
 	
 	for (short i = 0; i < 4; i++) {
 		fFoundations[i] = -1;
@@ -730,8 +784,6 @@ void KlondikeView::_GenerateBoard()
 	for (short i = 0; i != 24; i++) {
 		fStock[i] = _PickRandomCard();
 	}
-	
-	
 
 	fShuffle->StartPlaying();
 }
@@ -743,6 +795,9 @@ void KlondikeView::_CheckBoard() {
 	}
 	
 	fFanfare->StartPlaying();
+	
+	fMouseLock = true;
+	fWon = true;
 }
 
 

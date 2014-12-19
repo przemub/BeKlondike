@@ -56,6 +56,7 @@ public:
 
 	void NewGame();
 	void Hint();
+	void Cheat();
 	void Resize(float newWidth, float newHeight);
 
 private:
@@ -88,6 +89,7 @@ private:
 	short fFoundationsColors[4];
 	card* fAllCards[CARDS_IN_PLAY]; // all cards
 
+	bool fWon;
 	short fPickedCardBoardPos; // pile picked card is from
 	card* fPickedCard;
 	bool fIsCardPicked;

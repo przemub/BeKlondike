@@ -23,7 +23,6 @@ KlondikeWindow::KlondikeWindow(BRect frame, const char* title)
 	B_QUIT_ON_WINDOW_CLOSE)
 {
 	fView = new KlondikeView();
-	fDiffSet = new BInvoker(new BMessage(kDiffChosenMessage), this);
 	
 	SetPulseRate(500000);
 
@@ -41,19 +40,12 @@ void KlondikeWindow::FrameResized(float newWidth, float newHeight)
 
 void KlondikeWindow::MessageReceived(BMessage* message)
 {
-	BAlert* question;
-	int32 response;
-
 	switch (message->what) {
 	case kNewGameMessage:
 		fView->NewGame();
 		break;
-	case kDifficultyMessage:
-		question = new BAlert("DiffAlert", B_TRANSLATE("Choose difficulty level."),
-			B_TRANSLATE("Easy (1 color)"), B_TRANSLATE("Medium (2 colors)"),
-			B_TRANSLATE("Hard (4 colors)"),
-			B_WIDTH_AS_USUAL, B_IDEA_ALERT);
-		question->Go(fDiffSet);
+	case kCheatMessage:
+		fView->Cheat();
 		break;
 	case kHintMessage:
 		fView->Hint();
@@ -98,6 +90,10 @@ BMenuBar* KlondikeWindow::_CreateMenuBar()
 	menuItem = new BMenuItem(B_TRANSLATE_CONTEXT("Quit", "Menu bar"), new BMessage(B_QUIT_REQUESTED));
 	menuItem->SetShortcut('Q', B_COMMAND_KEY);
 	mGame->AddItem(menuItem);
+	
+	menuItem = new BMenuItem(B_TRANSLATE("Cheat!"), new BMessage(kCheatMessage));
+	menuItem->SetShortcut('C', B_COMMAND_KEY);
+	mOptions->AddItem(menuItem);
 
 	return menuBar;
 }
