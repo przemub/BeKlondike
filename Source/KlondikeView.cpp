@@ -74,13 +74,8 @@ void KlondikeView::Draw(BRect rect)
 			lastRevealed = i;	
 		}
 	
-	if (revealed < 23)
+	if (revealed < 24)
 		DrawBitmap(fBack[0], BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
-	else if (revealed == 23) {
-		fStock[fWasteCard]->fRevealed = true;
-		fWasteCard = lastRevealed;
-		DrawBitmap(fEmpty, BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
-	}
 	else
 		DrawBitmap(fEmpty, BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
 	
@@ -287,7 +282,12 @@ void KlondikeView::MouseDown(BPoint point)
 	
 	// stock
 	if (stack == 0 && point.y < 15 + CARD_HEIGHT && point.y > 15) {
-		if (++fWasteCard == 24) {
+		int revealed = 0;
+		for (short i = 0; i < 24; i++)
+			if (fStock[i]->fRevealed)
+				revealed++;
+		
+		if (revealed < 24 && ++fWasteCard == 24) {
 			fWasteCard = -1;
 			
 			fPoints -= 100;
@@ -506,7 +506,10 @@ void KlondikeView::MouseUp(BPoint point)
 				fPickedCard->fValue - fFoundations[foundation] == 1) {
 				fFoundations[foundation]++;
 				fPickedCard->fRevealed = true;
+				
 				fWasteCard--;
+				while (fWasteCard != -1 && fStock[fWasteCard]->fRevealed)
+					fWasteCard--;
 				
 				fPoints += 10;
 				
@@ -521,8 +524,11 @@ void KlondikeView::MouseUp(BPoint point)
 				_AddCardToPile(stack, fPickedCard);
 			
 				fPickedCard->fRevealed = true;
+				
 				fWasteCard--;
-			
+				while (fWasteCard != -1 && fStock[fWasteCard]->fRevealed)
+					fWasteCard--;
+					
 				fPoints += 5;
 			}
 		}
