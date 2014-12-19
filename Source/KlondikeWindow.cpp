@@ -47,9 +47,6 @@ void KlondikeWindow::MessageReceived(BMessage* message)
 	case kCheatMessage:
 		fView->Cheat();
 		break;
-	case kHintMessage:
-		fView->Hint();
-		break;
 	case 'DATA':
 		if(message->WasDropped()) {
 			fView->MouseUp(message->DropPoint());
@@ -75,11 +72,6 @@ BMenuBar* KlondikeWindow::_CreateMenuBar()
 	menuItem = new BMenuItem(B_TRANSLATE("New game"), new BMessage(kNewGameMessage));
 	menuItem->SetShortcut('N', B_COMMAND_KEY);
 	mGame->AddItem(menuItem);
-	
-	menuItem = new BMenuItem(B_TRANSLATE_CONTEXT("Hint", "Menu bar"), new BMessage(kHintMessage));
-	menuItem->SetShortcut('H', B_COMMAND_KEY);
-	mGame->AddItem(menuItem);
-	mGame->AddSeparatorItem();
 
 	BMenuItem* about = new BMenuItem(B_TRANSLATE_CONTEXT("About" B_UTF8_ELLIPSIS, "Menu bar"),
 		new BMessage(B_ABOUT_REQUESTED));

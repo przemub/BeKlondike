@@ -240,21 +240,7 @@ void KlondikeView::Draw(BRect rect)
 
 void KlondikeView::Pulse()
 {
-	if (fIsHintShown > 0)
-		fIsHintShown--;
-	else if (fIsHintShown == 0) {
-		for (card* currentCard = fHints[0]; currentCard != NULL;
-				currentCard = currentCard->fNextCard) {
-			if(currentCard->fEffect == E_GREEN)
-				currentCard->fEffect = E_NONE;
-		}
-
-		fHints[1]->fEffect = E_NONE;
-
-		fIsHintShown = -1;
-
-		Invalidate();
-	}
+	;
 }
 
 
@@ -579,74 +565,6 @@ int KlondikeView::_CardHSpacing()
 }
 
 
-
-void KlondikeView::Hint()
-{
-	if (fIsHintShown != -1)
-		return;
-
-	card* highestCard[10];
-	short stocksValues[10];
-
-	for (short i = 0; i != 7; i++) {
-		highestCard[i] = _FindLastUsed(i);
-		if(highestCard[i] == NULL) {
-			stocksValues[i] = -1;
-			continue;
-		}
-		stocksValues[i] = highestCard[i]->fValue;
-
-		for (card* currentCard = highestCard[i]->fPrevCard;
-				currentCard != NULL; currentCard = currentCard->fPrevCard) {
-			if (currentCard->fRevealed == false || 
-					currentCard->fValue - stocksValues[i] != 1)
-				break;
-
-			highestCard[i] = currentCard;
-			stocksValues[i] = currentCard->fValue;
-		}
-	}
-
-	
-	short status = 0;
-	short x = fHintStatus[0];
-	short y = fHintStatus[1]+1;
-	
-	for(;; x = (x+1) % 7) {
-		for(; y < 7; y++) {
-			if(_FindLastUsed(y) == NULL ||
-					_FindLastUsed(y)->fValue - stocksValues[x] == 1) {
-				status = 1; // found a match
-				break;
-			}
-			if(x == fHintStatus[0] && y == fHintStatus[1]) {
-				status = 2; // didn't find a match
-				break;
-			}
-		}
-		if(status != 0) break;
-		y = 0;
-	}
-	
-	fHintStatus[0] = x;
-	fHintStatus[1] = y;
-	
-	if(status == 1) {
-		fIsHintShown = 2;
-		fHints[0] = highestCard[x];
-		fHints[1] = _FindLastUsed(y);
-
-		for (card* currentCard = fHints[0];
-				currentCard != NULL; currentCard = currentCard->fNextCard)
-			currentCard->fEffect = E_GREEN;
-
-		fHints[1]->fEffect = E_RED;
-	}
-
-	Invalidate();
-}
-
-
 void KlondikeView::Cheat() {
 	for (short i = 0; i < 4; i++) {
 		fFoundationsColors[i] = i;
@@ -819,10 +737,7 @@ void KlondikeView::_GenerateBoard()
 	fWasteCard = -1;
 	fIsCardPicked = false;
 	fIsWasteCardPicked = false;
-	fIsHintShown = -1;
 	fMouseLock = false;
-	fHintStatus[0] = 0;
-	fHintStatus[1] = 0;
 	fWon = false;
 	
 	for (short i = 0; i < 4; i++) {

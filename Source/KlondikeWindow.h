@@ -13,7 +13,6 @@
 
 const int32 kNewGameMessage = 'NewG';
 const int32 kCheatMessage = 'Chtr';
-const int32 kHintMessage = 'Hint';
 
 
 class KlondikeWindow : public BWindow {
@@ -27,7 +26,6 @@ private:
 	BMenuBar* _CreateMenuBar();
 
 	KlondikeView* fView;
-	BInvoker* fDiffSet;
 };
 
 #endif	// _KLONDIKEWINDOW_H_

@@ -55,7 +55,6 @@ public:
 	virtual void MouseUp(BPoint point);
 
 	void NewGame();
-	void Hint();
 	void Cheat();
 	void Resize(float newWidth, float newHeight);
 
@@ -95,10 +94,6 @@ private:
 	card* fPickedCard;
 	bool fIsCardPicked;
 	bool fMouseLock;
-
-	short fIsHintShown;
-	card* fHints[2];
-	short fHintStatus[2];
 
 	int fPoints;};
 
