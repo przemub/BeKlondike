@@ -598,23 +598,26 @@ BSimpleGameSound* KlondikeView::_LoadSound(const char* resourceName)
 {
 	size_t size;
 	const void* data = fResources->LoadResource('rSFX', resourceName, &size);
-	if(data == NULL) {
-		printf("Error loading sound resource: %s\n", resourceName);
-		return NULL;
+	if (data == NULL) {
+		printf("Sound resource not found: %s\n", resourceName);
+		return new BSimpleGameSound("");
 	}
 	
 	gs_audio_format format;
-	format.frame_rate = 44100;
-	format.channel_count = 2; // stereo
-	format.format = 0x02;
+	format.frame_rate = 22050;
+	format.channel_count = 1; // mono
+	format.format = 0x2;
 	format.byte_order = 0;
 	format.buffer_size = 0; // auto
 	
-	BSimpleGameSound* sound = new BSimpleGameSound(data, size, &format);
+	BSimpleGameSound* sound = new BSimpleGameSound(data, size/2, &format);
 	
-	if(sound->InitCheck() != B_OK) {
-		printf("Error loading sound resource: %s\n", resourceName);
+	status_t status = sound->InitCheck();
+	if (status != B_OK) {
+		printf("Error loading sound resource: %s. Error code: %d\n",
+			resourceName, status);
 	}
+		
 	return sound;
 }
 
