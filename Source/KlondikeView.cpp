@@ -153,6 +153,7 @@ void KlondikeView::Draw(BRect rect)
 		}
 	}
 	
+	// tableaux
 	for (short i = 0; i < 7; i++) {
 		BRect rect(hSpacing + i * (CARD_WIDTH + hSpacing), 146,
 				hSpacing + (i + 1) * CARD_WIDTH + i * hSpacing,
@@ -172,9 +173,9 @@ void KlondikeView::Draw(BRect rect)
 						currentCard = currentCard->fNextCard;
 						numberOfBacks++;
 					}
-					rect.bottom += numberOfBacks * 15;
+					rect.bottom += numberOfBacks * 18;
 					DrawBitmap(fBack[numberOfBacks], rect);
-					rect.top += 15 * numberOfBacks;
+					rect.top += 18 * numberOfBacks;
 				} else if (currentCard->fEffect != E_HIDDEN) {
 					DrawBitmap(fCards[currentCard->fColor * CARDS_IN_SUIT
 						+ currentCard->fValue], rect);
@@ -189,7 +190,7 @@ void KlondikeView::Draw(BRect rect)
 						SetHighColor(0, 85, 0, 190);
 						break;
 					case E_GREEN:
-						SetHighColor(0, 204, 0, 127);
+						SetHighColor(0, 184, 0, 127);
 						break;
 					case E_RED:
 						SetHighColor(255, 0, 0, 127);
@@ -199,7 +200,7 @@ void KlondikeView::Draw(BRect rect)
 					}
 					FillRect(rect);
 				}
-				rect.top += 15;
+				rect.top += 18;
 				rect.bottom = rect.top + CARD_HEIGHT;
 			}
 		}
@@ -359,7 +360,7 @@ void KlondikeView::MouseDown(BPoint point)
 		int cardNumber = 1;
 		card* picked = fBoard[stack];
 		while (picked->fNextCard != NULL) {
-			if (point.y - 15 * cardNumber - CARD_HEIGHT - 15 < 15) {
+			if (point.y - 18 * cardNumber - CARD_HEIGHT - 15 < 18) {
 				break;
 			}
 			picked = picked->fNextCard;
@@ -367,7 +368,7 @@ void KlondikeView::MouseDown(BPoint point)
 		}
 		if (picked->fNextCard == NULL) {
 			// on last card, if below than not clicking on card
-			if (point.y - 15 * cardNumber - CARD_HEIGHT - 15 >= CARD_HEIGHT) {
+			if (point.y - 18 * cardNumber - CARD_HEIGHT - 15 >= CARD_HEIGHT) {
 				return;
 			}
 		}
@@ -401,7 +402,7 @@ void KlondikeView::MouseDown(BPoint point)
 				fCards[picked->fColor * CARDS_IN_SUIT + picked->fValue]);
 		else {
 			img = new BBitmap(BRect(0, 0, CARD_WIDTH - 1,
-				CARD_HEIGHT + (pickedHeight- 1 ) * 15),
+				CARD_HEIGHT + (pickedHeight - 1) * 18),
 				fBack[0]->ColorSpace(), true);
 			BView* imgView = new BView(img->Bounds(), NULL, 0, 0);
 			BRect destRect = fBack[0]->Bounds();
@@ -413,7 +414,7 @@ void KlondikeView::MouseDown(BPoint point)
 			imgView->DrawBitmap(fCards
 				[currentCard->fColor * CARDS_IN_SUIT + currentCard->fValue],
 				destRect);
-			destRect.top = (pickedHeight - 1) * 15;
+			destRect.top = (pickedHeight - 1) * 18;
 			destRect.bottom = destRect.top + CARD_HEIGHT;
 
 			imgView->DrawBitmap(fBack[0], destRect);
@@ -421,7 +422,7 @@ void KlondikeView::MouseDown(BPoint point)
 
 			imgView->SetDrawingMode(B_OP_ALPHA);
 			for (short j = 0; j < pickedHeight; j++) {
-				destRect.top = j * 15;
+				destRect.top = j * 18;
 				destRect.bottom = destRect.top + CARD_HEIGHT;
 				imgView->DrawBitmap(fCards[currentCard->fColor
 					* CARDS_IN_SUIT + currentCard->fValue], destRect);
@@ -435,7 +436,7 @@ void KlondikeView::MouseDown(BPoint point)
 		}
 		DragMessage(&msg, img, B_OP_BLEND,
 			BPoint((int)(point.x - hSpacing) % (CARD_WIDTH + hSpacing),
-			point.y - cardNumber * 15 - 131));
+			point.y - cardNumber * 18 - 131));
 		
 		Invalidate();
 	}
@@ -448,7 +449,7 @@ void KlondikeView::MouseUp(BPoint point)
 		int hSpacing = _CardHSpacing();
 		short stack = (int)((point.x - hSpacing) / (CARD_WIDTH + hSpacing));
 
-		if (stack >= 3 && stack < 7 && point.y < 15 + CARD_HEIGHT) {
+		if (stack >= 3 && stack < 7 && point.y < 18 + CARD_HEIGHT) {
 			short foundation = stack - 3;
 			
 			if (fPickedCard->fValue == 0)
@@ -501,7 +502,7 @@ void KlondikeView::MouseUp(BPoint point)
 		int hSpacing = _CardHSpacing();
 		short stack = (int)((point.x - hSpacing) / (CARD_WIDTH + hSpacing));
 		
-		if (stack >= 3 && stack < 7 && point.y < 15 + CARD_HEIGHT) {
+		if (stack >= 3 && stack < 7 && point.y < 18 + CARD_HEIGHT) {
 			short foundation = stack - 3;
 			
 			if (fPickedCard->fValue == 0)
@@ -664,7 +665,7 @@ void KlondikeView::_LoadBitmaps()
 	// cache multiple backs in a row
 	for (short i = 1; i < CACHED_BACKS; i++) {
 		fBack[i] = new BBitmap(BRect(0, 0, CARD_WIDTH - 1,
-			CARD_HEIGHT + i * 15), fBack[0]->ColorSpace(), true);
+			CARD_HEIGHT + i * 18), fBack[0]->ColorSpace(), true);
 		
 		BView* fBackView = new BView(fBack[i]->Bounds(), NULL, 0, 0);
 		BRect destRect = fBack[0]->Bounds();
@@ -673,13 +674,13 @@ void KlondikeView::_LoadBitmaps()
 		
 		fBackView->SetDrawingMode(B_OP_COPY);
 		fBackView->DrawBitmap(fBack[0], destRect);
-		destRect.top = i * 15;
+		destRect.top = i * 18;
 		destRect.bottom = destRect.top + CARD_HEIGHT;
 		fBackView->DrawBitmap(fBack[0], destRect);
 		
 		fBackView->SetDrawingMode(B_OP_ALPHA);
 		for (short j = 0; j < i + 1; j++) {
-			destRect.top = j * 15;
+			destRect.top = j * 18;
 			destRect.bottom = destRect.top + CARD_HEIGHT;
 			fBackView->DrawBitmap(fBack[0], destRect);
 		}
