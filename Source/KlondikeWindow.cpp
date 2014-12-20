@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-14 Przemysław Buczkowski <przemub@przemub.pl>
+ * Copyright 2013-2014 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
 #include "KlondikeWindow.h"
@@ -51,7 +51,7 @@ void KlondikeWindow::MessageReceived(BMessage* message)
 		fView->MoveAllToFoundations();
 		break;
 	case 'DATA':
-		if(message->WasDropped()) {
+		if (message->WasDropped()) {
 			fView->MouseUp(message->DropPoint());
 		} else {
 			BWindow::MessageReceived(message);
@@ -72,26 +72,31 @@ BMenuBar* KlondikeWindow::_CreateMenuBar()
 	menuBar->AddItem(mGame);
 	menuBar->AddItem(mOptions);
 	
-	menuItem = new BMenuItem(B_TRANSLATE("New game"), new BMessage(kNewGameMessage));
+	menuItem = new BMenuItem(B_TRANSLATE("New game"),
+		new BMessage(kNewGameMessage));
 	menuItem->SetShortcut('N', B_COMMAND_KEY);
 	mGame->AddItem(menuItem);
 
-	BMenuItem* about = new BMenuItem(B_TRANSLATE_CONTEXT("About" B_UTF8_ELLIPSIS, "Menu bar"),
+	BMenuItem* about =
+		new BMenuItem(B_TRANSLATE_CONTEXT("About" B_UTF8_ELLIPSIS, "Menu bar"),
 		new BMessage(B_ABOUT_REQUESTED));
 	about->SetTarget(be_app);
 	mGame->AddItem(about);
 	mGame->AddSeparatorItem();
 	
-	menuItem = new BMenuItem(B_TRANSLATE("Auto-move"), new BMessage(kAutoMoveMessage));
+	menuItem = new BMenuItem(B_TRANSLATE("Auto-move"),
+		new BMessage(kAutoMoveMessage));
 	menuItem->SetShortcut('A', B_COMMAND_KEY);
 	mGame->AddItem(menuItem);
 	mGame->AddSeparatorItem();
 	
-	menuItem = new BMenuItem(B_TRANSLATE_CONTEXT("Quit", "Menu bar"), new BMessage(B_QUIT_REQUESTED));
+	menuItem = new BMenuItem(B_TRANSLATE_CONTEXT("Quit", "Menu bar"),
+		new BMessage(B_QUIT_REQUESTED));
 	menuItem->SetShortcut('Q', B_COMMAND_KEY);
 	mGame->AddItem(menuItem);
 	
-	menuItem = new BMenuItem(B_TRANSLATE("Cheat!"), new BMessage(kCheatMessage));
+	menuItem = new BMenuItem(B_TRANSLATE("Cheat!"),
+		new BMessage(kCheatMessage));
 	menuItem->SetShortcut('C', B_COMMAND_KEY);
 	mOptions->AddItem(menuItem);
 

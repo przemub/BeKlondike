@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-14 Przemysław Buczkowski <przemub@przemub.pl>
+ * Copyright 2013-2014 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
 #include "KlondikeView.h"
@@ -23,8 +23,9 @@
 
 KlondikeView::KlondikeView()
 	:
-	BView(BRect(0, 0, STARTING_WINDOW_WIDTH+10, STARTING_WINDOW_HEIGHT+10), "KlondikeView",
-		B_FOLLOW_LEFT | B_FOLLOW_TOP, B_WILL_DRAW | B_PULSE_NEEDED | B_FULL_UPDATE_ON_RESIZE)
+	BView(BRect(0, 0, STARTING_WINDOW_WIDTH + 10, STARTING_WINDOW_HEIGHT + 10),
+		"KlondikeView", B_FOLLOW_LEFT | B_FOLLOW_TOP,
+		B_WILL_DRAW | B_PULSE_NEEDED | B_FULL_UPDATE_ON_RESIZE)
 {
 	SetViewColor(0, 85, 0);
 
@@ -33,7 +34,7 @@ KlondikeView::KlondikeView()
 
 	_LoadBitmaps();
 	
-	for(short i = 0; i < CARDS_IN_PLAY; i++)
+	for (short i = 0; i < CARDS_IN_PLAY; i++)
 		fAllCards[i] = NULL;
 }
 
@@ -43,11 +44,11 @@ KlondikeView::~KlondikeView()
 	delete fShuffle;
 	delete fFanfare;
 	delete fEmpty;
-	for(short i = 0; i < CACHED_BACKS; i++)
+	for (short i = 0; i < CACHED_BACKS; i++)
 		delete fBack[i];
-	for(short i = 0; i < CARDS_IN_DECK; i++)
+	for (short i = 0; i < CARDS_IN_DECK; i++)
 		delete fCards[i];
-	for(short i = 0; i < CARDS_IN_PLAY; i++)
+	for (short i = 0; i < CARDS_IN_PLAY; i++)
 		delete fAllCards[i];
 }
 
@@ -72,15 +73,17 @@ void KlondikeView::Draw(BRect rect)
 			revealed++;
 	
 	if (revealed < 24)
-		DrawBitmap(fBack[0], BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
+		DrawBitmap(fBack[0], BRect(hSpacing, 15,
+			hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
 	else
-		DrawBitmap(fEmpty, BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
+		DrawBitmap(fEmpty, BRect(hSpacing, 15,
+		hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
 	
 	// waste
 	if (fIsWasteCardPicked) {
 		int lastWasteCard = fWasteCard - 1;
 		
-		if (lastWasteCard != -1)		
+		if (lastWasteCard != -1)
 			while (fStock[lastWasteCard]->fRevealed) {
 				lastWasteCard--;
 				if (lastWasteCard == -1) {
@@ -90,15 +93,14 @@ void KlondikeView::Draw(BRect rect)
 		
 		if (lastWasteCard != -1)
 			DrawBitmap(
-				fCards[fStock[lastWasteCard]->fColor*
-				CARDS_IN_SUIT+fStock[lastWasteCard]->fValue],
-				BRect(2*hSpacing + CARD_WIDTH, 15,
-				2*hSpacing + 2*CARD_WIDTH, 15 + CARD_HEIGHT));
+				fCards[fStock[lastWasteCard]->fColor
+				* CARDS_IN_SUIT + fStock[lastWasteCard]->fValue],
+				BRect(2 * hSpacing + CARD_WIDTH, 15,
+				2 * hSpacing + 2 * CARD_WIDTH, 15 + CARD_HEIGHT));
 		else
-			DrawBitmap(fEmpty, BRect(2*hSpacing + CARD_WIDTH, 15,
-				2*hSpacing + 2*CARD_WIDTH, 15 + CARD_HEIGHT));
-	}
-	else if (fWasteCard != -1) {
+			DrawBitmap(fEmpty, BRect(2 * hSpacing + CARD_WIDTH, 15,
+				2 * hSpacing + 2 * CARD_WIDTH, 15 + CARD_HEIGHT));
+	} else if (fWasteCard != -1) {
 		if (fWasteCard > 23) {
 			fWasteCard = -1;
 			
@@ -123,60 +125,60 @@ void KlondikeView::Draw(BRect rect)
 			}
 		}
 		
-		rect = BRect(2*hSpacing + CARD_WIDTH, 15,
-			2*hSpacing + 2*CARD_WIDTH, 15 + CARD_HEIGHT);
+		rect = BRect(2 * hSpacing + CARD_WIDTH, 15,
+			2 * hSpacing + 2 * CARD_WIDTH, 15 + CARD_HEIGHT);
 		
 		if (fWasteCard != -1)
 			DrawBitmap(
-				fCards[fStock[fWasteCard]->fColor*
-				CARDS_IN_SUIT+fStock[fWasteCard]->fValue],
-				rect);
+				fCards[fStock[fWasteCard]->fColor
+				* CARDS_IN_SUIT + fStock[fWasteCard]->fValue], rect);
 		else
 			DrawBitmap(fEmpty, rect);
 			
-	}
-	else
-		DrawBitmap(fEmpty, BRect(2*hSpacing + CARD_WIDTH, 15,
-			2*hSpacing + 2*CARD_WIDTH, 15 + CARD_HEIGHT));
+	} else
+		DrawBitmap(fEmpty, BRect(2 * hSpacing + CARD_WIDTH, 15,
+			2 * hSpacing + 2 * CARD_WIDTH, 15 + CARD_HEIGHT));
 	
 	// foundations
-	for(short i = 0; i < 4; i++) {
-		BRect rect = BRect((i+4)*hSpacing + (i+3)*CARD_WIDTH, 15,
-			(i+4)*hSpacing + (i+4)*CARD_WIDTH, 15 + CARD_HEIGHT);
+	for (short i = 0; i < 4; i++) {
+		BRect rect = BRect((i + 4)*hSpacing + (i + 3)*CARD_WIDTH, 15,
+			(i + 4)*hSpacing + (i + 4)*CARD_WIDTH, 15 + CARD_HEIGHT);
 		
 		if (fFoundations[i]	== -1) {
 			DrawBitmap(fEmpty, rect);
 		} else {
-			DrawBitmap(fCards[fFoundationsColors[i]*CARDS_IN_SUIT+fFoundations[i]], rect);
+			DrawBitmap(
+				fCards[fFoundationsColors[i] * CARDS_IN_SUIT + fFoundations[i]],
+				rect);
 		}
 	}
 	
-	for(short i = 0; i < 7; i++) {
+	for (short i = 0; i < 7; i++) {
 		BRect rect(hSpacing + i * (CARD_WIDTH + hSpacing), 146,
 				hSpacing + (i + 1) * CARD_WIDTH + i * hSpacing,
 				146 + CARD_HEIGHT);
-		if(fBoard[i] == NULL)
+		if (fBoard[i] == NULL)
 			DrawBitmap(fEmpty, rect);
 		else {
 			card* currentCard;
-			for(currentCard = fBoard[i]; currentCard != NULL;
+			for (currentCard = fBoard[i]; currentCard != NULL;
 					currentCard = currentCard->fNextCard) {
-				if(currentCard->fRevealed == false) {
-					short numberOfBacks = 0; // 1 back
-					while(currentCard->fNextCard != NULL &&
-							currentCard->fNextCard->fRevealed == false &&
-							numberOfBacks < CACHED_BACKS) {
+				if (currentCard->fRevealed == false) {
+					short numberOfBacks = 0;
+						// 1 back
+					while (currentCard->fNextCard != NULL
+						&& currentCard->fNextCard->fRevealed == false
+						&& numberOfBacks < CACHED_BACKS) {
 						currentCard = currentCard->fNextCard;
 						numberOfBacks++;
 					}
-					rect.bottom += numberOfBacks*15;
+					rect.bottom += numberOfBacks * 15;
 					DrawBitmap(fBack[numberOfBacks], rect);
-					rect.top += 15*numberOfBacks;
-				} else if(currentCard->fEffect != E_HIDDEN) {
-					DrawBitmap(
-						fCards[currentCard->fColor*CARDS_IN_SUIT+currentCard->fValue],
-						rect);
-					switch(currentCard->fEffect) {
+					rect.top += 15 * numberOfBacks;
+				} else if (currentCard->fEffect != E_HIDDEN) {
+					DrawBitmap(fCards[currentCard->fColor * CARDS_IN_SUIT
+						+ currentCard->fValue], rect);
+					switch (currentCard->fEffect) {
 					case E_ALPHA25:
 						SetHighColor(0, 85, 0, 63);
 						break;
@@ -217,20 +219,23 @@ void KlondikeView::Draw(BRect rect)
 	BFont smallFont = BFont();
 	smallFont.SetSize(12);
 
-	SetHighColor(255,255,255);
+	SetHighColor(255, 255, 255);
 
 	SetFont(&bigFont);
-	DrawString(points, BPoint((windowWidth+10 - bigFont.StringWidth(points)) / 2, windowHeight-15));
+	DrawString(points,
+		BPoint((windowWidth + 10 - bigFont.StringWidth(points)) / 2,
+		windowHeight - 15));
 
 	SetFont(&smallFont);
-	DrawString(B_TRANSLATE("points"), BPoint((windowWidth+10
+	DrawString(B_TRANSLATE("points"), BPoint((windowWidth + 10
 		- smallFont.StringWidth(B_TRANSLATE("points"))) / 2, windowHeight));
 	
 	if (fWon) {
-		SetHighColor(255,0,0);
+		SetHighColor(255, 0, 0);
 		SetFont(&biggerFont);
 		DrawString(B_TRANSLATE("YOU WON"), BPoint((windowWidth + 10
-			- biggerFont.StringWidth(B_TRANSLATE("YOU WON"))) / 2, windowHeight - 40));
+			- biggerFont.StringWidth(B_TRANSLATE("YOU WON"))) / 2,
+			windowHeight - 40));
 	}
 }
 
@@ -243,7 +248,7 @@ void KlondikeView::Pulse()
 
 void KlondikeView::Resize(float newWidth, float newHeight)
 {
-	ResizeTo(newWidth, newHeight-20);
+	ResizeTo(newWidth, newHeight - 20);
 	windowWidth = (int)newWidth - 20;
 	windowHeight = (int)newHeight - 30;
 }
@@ -271,8 +276,8 @@ void KlondikeView::MouseDown(BPoint point)
 		return;
 	
 	// stock
-	if (point.y < 15 + CARD_HEIGHT && point.y > 15 &&
-		stack == 0 && point.x > hSpacing) {
+	if (point.y < 15 + CARD_HEIGHT && point.y > 15
+		&& stack == 0 && point.x > hSpacing) {
 		int revealed = 0;
 		for (short i = 0; i < 24; i++)
 			if (fStock[i]->fRevealed)
@@ -301,7 +306,8 @@ void KlondikeView::MouseDown(BPoint point)
 		
 		BMessage msg(B_SIMPLE_DATA);
 		msg.AddPointer("view", this);
-		BBitmap* img = new BBitmap(fCards[picked->fColor*CARDS_IN_SUIT+picked->fValue]);
+		BBitmap* img = new BBitmap(
+			fCards[picked->fColor * CARDS_IN_SUIT + picked->fValue]);
 		
 		DragMessage(&msg, img, B_OP_BLEND,
 			BPoint((int)(point.x - hSpacing) % (CARD_WIDTH + hSpacing),
@@ -314,7 +320,7 @@ void KlondikeView::MouseDown(BPoint point)
 	
 	// pick up a card from a foundation
 	if (stack > 2 && stack < 7 && point.y < 15 + CARD_HEIGHT) {
-		short foundation = stack-3;
+		short foundation = stack - 3;
 		short value = fFoundations[foundation];
 		short color = fFoundationsColors[foundation];
 		
@@ -323,14 +329,15 @@ void KlondikeView::MouseDown(BPoint point)
 		
 		// find picked card
 		for (short i = 0; i < CARDS_IN_DECK; i++) {
-			if (fAllCards[i]->fValue == value &&
-				fAllCards[i]->fColor == color)
+			if (fAllCards[i]->fValue == value
+				&& fAllCards[i]->fColor == color)
 			fPickedCard = fAllCards[i];
 		}
 		
 		BMessage msg(B_SIMPLE_DATA);
 		msg.AddPointer("view", this);
-		BBitmap* img = new BBitmap(fCards[fPickedCard->fColor*CARDS_IN_SUIT+fPickedCard->fValue]);
+		BBitmap* img = new BBitmap(
+			fCards[fPickedCard->fColor * CARDS_IN_SUIT + fPickedCard->fValue]);
 		
 		fIsFoundationCardPicked = true;
 		fPickedCardBoardPos = foundation;
@@ -346,35 +353,35 @@ void KlondikeView::MouseDown(BPoint point)
 	}
 
 	// pick up a stack
-	if (stack < 7 && fBoard[stack] != NULL &&
-		point.x > hSpacing && point.y > 2*15 + CARD_HEIGHT) {
+	if (stack < 7 && fBoard[stack] != NULL
+		&& point.x > hSpacing && point.y > 2 * 15 + CARD_HEIGHT) {
 		// find clicked on card
 		int cardNumber = 1;
 		card* picked = fBoard[stack];
-		while(picked->fNextCard != NULL) {
-			if(point.y - 15 * cardNumber - CARD_HEIGHT - 15 < 15) {
+		while (picked->fNextCard != NULL) {
+			if (point.y - 15 * cardNumber - CARD_HEIGHT - 15 < 15) {
 				break;
 			}
 			picked = picked->fNextCard;
 			cardNumber++;
 		}
-		if(picked->fNextCard == NULL) {
+		if (picked->fNextCard == NULL) {
 			// on last card, if below than not clicking on card
-			if(point.y - 15 * cardNumber - CARD_HEIGHT - 15 >= CARD_HEIGHT) {
+			if (point.y - 15 * cardNumber - CARD_HEIGHT - 15 >= CARD_HEIGHT) {
 				return;
 			}
 		}
 		
-		if(picked->fRevealed == false)
+		if (picked->fRevealed == false)
 			return;
 		
 		card* currentCard = picked->fNextCard;
 		card* lastCard = picked;
 		short pickedHeight = 1;
-		for(short i = 1; currentCard != NULL;
+		for (short i = 1; currentCard != NULL;
 				i++) {
 			pickedHeight++;
-			if(lastCard->fIsColorRed == currentCard->fIsColorRed)
+			if (lastCard->fIsColorRed == currentCard->fIsColorRed)
 				return;
 			lastCard = currentCard;
 			currentCard = currentCard->fNextCard;
@@ -389,30 +396,35 @@ void KlondikeView::MouseDown(BPoint point)
 		BMessage msg(B_SIMPLE_DATA);
 		msg.AddPointer("view", this);
 		BBitmap* img;
-		if(pickedHeight == 1)
-			img = new BBitmap(fCards[picked->fColor*CARDS_IN_SUIT+picked->fValue]);
+		if (pickedHeight == 1)
+			img = new BBitmap(
+				fCards[picked->fColor * CARDS_IN_SUIT + picked->fValue]);
 		else {
-			img = new BBitmap(BRect(0, 0, CARD_WIDTH-1, CARD_HEIGHT + (pickedHeight-1) * 15), fBack[0]->ColorSpace(), true);
+			img = new BBitmap(BRect(0, 0, CARD_WIDTH - 1,
+				CARD_HEIGHT + (pickedHeight- 1 ) * 15),
+				fBack[0]->ColorSpace(), true);
 			BView* imgView = new BView(img->Bounds(), NULL, 0, 0);
 			BRect destRect = fBack[0]->Bounds();
 			img->AddChild(imgView);
 			img->Lock();
 			currentCard = picked;
-			
+
 			imgView->SetDrawingMode(B_OP_COPY);
 			imgView->DrawBitmap(fCards
-				[currentCard->fColor*CARDS_IN_SUIT+currentCard->fValue],
+				[currentCard->fColor * CARDS_IN_SUIT + currentCard->fValue],
 				destRect);
-			destRect.top = (pickedHeight-1)*15;
+			destRect.top = (pickedHeight - 1) * 15;
 			destRect.bottom = destRect.top + CARD_HEIGHT;
-			// we don't know the top card yet, so we'll overwrite this
+
 			imgView->DrawBitmap(fBack[0], destRect);
-			
+				// we don't know the top card yet, so we'll overwrite this
+
 			imgView->SetDrawingMode(B_OP_ALPHA);
-			for(short j = 0; j < pickedHeight; j++) {
-				destRect.top = j*15;
+			for (short j = 0; j < pickedHeight; j++) {
+				destRect.top = j * 15;
 				destRect.bottom = destRect.top + CARD_HEIGHT;
-				imgView->DrawBitmap(fCards[currentCard->fColor*CARDS_IN_SUIT+currentCard->fValue], destRect);
+				imgView->DrawBitmap(fCards[currentCard->fColor
+					* CARDS_IN_SUIT + currentCard->fValue], destRect);
 				currentCard = currentCard->fNextCard;
 			}
 			
@@ -437,13 +449,13 @@ void KlondikeView::MouseUp(BPoint point)
 		short stack = (int)((point.x - hSpacing) / (CARD_WIDTH + hSpacing));
 
 		if (stack >= 3 && stack < 7 && point.y < 15 + CARD_HEIGHT) {
-			short foundation = stack-3;
+			short foundation = stack - 3;
 			
 			if (fPickedCard->fValue == 0)
 				fFoundationsColors[foundation] = fPickedCard->fColor;
 			
-			if (fFoundationsColors[foundation] == fPickedCard->fColor &&
-				fPickedCard->fValue - fFoundations[foundation] == 1) {
+			if (fFoundationsColors[foundation] == fPickedCard->fColor
+				&& fPickedCard->fValue - fFoundations[foundation] == 1) {
 				fFoundations[foundation]++;
 				if (_FindLastUsed(fPickedCardBoardPos) != NULL)
 						_FindLastUsed(fPickedCardBoardPos)->fRevealed = true;
@@ -456,16 +468,16 @@ void KlondikeView::MouseUp(BPoint point)
 		}
 		
 
-		else if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL ||
-				(_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1 &&
-				_FindLastUsed(stack)->fIsColorRed != fPickedCard->fIsColorRed))
-				&& fIsCardPicked) {
+		else if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL
+			|| (_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1
+			&& _FindLastUsed(stack)->fIsColorRed
+			!= fPickedCard->fIsColorRed)) && fIsCardPicked) {
 			// attach to stack, only kings on empty fields
 			if (!(fPickedCard-> fValue != 12 && fBoard[stack] == NULL)) {
 				_AddCardToPile(stack, fPickedCard);
 			
 				// reveal last card from pile the cards were from
-				if(_FindLastUsed(fPickedCardBoardPos) != NULL) {
+				if (_FindLastUsed(fPickedCardBoardPos) != NULL) {
 					_FindLastUsed(fPickedCardBoardPos)->fRevealed = true;
 					
 					if (stack != fPickedCardBoardPos)
@@ -490,13 +502,13 @@ void KlondikeView::MouseUp(BPoint point)
 		short stack = (int)((point.x - hSpacing) / (CARD_WIDTH + hSpacing));
 		
 		if (stack >= 3 && stack < 7 && point.y < 15 + CARD_HEIGHT) {
-			short foundation = stack-3;
+			short foundation = stack - 3;
 			
 			if (fPickedCard->fValue == 0)
 				fFoundationsColors[foundation] = fPickedCard->fColor;
 			
-			if (fFoundationsColors[foundation] == fPickedCard->fColor &&
-				fPickedCard->fValue - fFoundations[foundation] == 1) {
+			if (fFoundationsColors[foundation] == fPickedCard->fColor
+				&& fPickedCard->fValue - fFoundations[foundation] == 1) {
 				fFoundations[foundation]++;
 				fPickedCard->fRevealed = true;
 				
@@ -510,8 +522,8 @@ void KlondikeView::MouseUp(BPoint point)
 			}
 		}
 		
-		else if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL ||
-				_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1)) {
+		else if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL
+				|| _FindLastUsed(stack)->fValue - fPickedCard->fValue == 1)) {
 			// attach to stack, only kings on empty fields
 			if (!(fPickedCard-> fValue != 12 && fBoard[stack] == NULL)) {
 				_AddCardToPile(stack, fPickedCard);
@@ -535,8 +547,8 @@ void KlondikeView::MouseUp(BPoint point)
 		int hSpacing = _CardHSpacing();
 		short stack = (int)((point.x - hSpacing) / (CARD_WIDTH + hSpacing));
 		
-		if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL ||
-				_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1)) {
+		if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL
+				|| _FindLastUsed(stack)->fValue - fPickedCard->fValue == 1)) {
 			// attach to stack
 			_AddCardToPile(stack, fPickedCard);
 			
@@ -568,7 +580,7 @@ void KlondikeView::NewGame()
 
 int KlondikeView::_CardHSpacing()
 {
-	return((windowWidth - (CARD_WIDTH*7)) / 8);
+	return((windowWidth - (CARD_WIDTH * 7)) / 8);
 }
 
 
@@ -591,6 +603,7 @@ void KlondikeView::Cheat() {
 	_CheckBoard();
 }
 
+
 BSimpleGameSound* KlondikeView::_LoadSound(const char* resourceName)
 {
 	size_t size;
@@ -602,12 +615,14 @@ BSimpleGameSound* KlondikeView::_LoadSound(const char* resourceName)
 	
 	gs_audio_format format;
 	format.frame_rate = 22050;
-	format.channel_count = 1; // mono
+	format.channel_count = 1;
+		// mono
 	format.format = 0x2;
 	format.byte_order = 0;
-	format.buffer_size = 0; // auto
+	format.buffer_size = 0;
+		// auto
 	
-	BSimpleGameSound* sound = new BSimpleGameSound(data, size/2, &format);
+	BSimpleGameSound* sound = new BSimpleGameSound(data, size / 2, &format);
 	
 	status_t status = sound->InitCheck();
 	if (status != B_OK) {
@@ -627,13 +642,15 @@ void KlondikeView::_LoadBitmaps()
 		"club",
 		"diamond"
 	};
+
 	// load images
 	BString filename;
 	for (short i = 0; i < CARDS_IN_SUIT; i++) {
-		for(short j = 0; j < 4; j++) {
+		for (short j = 0; j < 4; j++) {
 			filename = "";
 			filename << "Artwork/" << i + 1 << "_" << suits[j] << ".png";
-			fCards[j*CARDS_IN_SUIT+i] = BTranslationUtils::GetBitmap('rGFX', filename);
+			fCards[j * CARDS_IN_SUIT + i]
+				= BTranslationUtils::GetBitmap('rGFX', filename);
 		}
 	}
 	fBack[0] = BTranslationUtils::GetBitmap('rGFX', "Artwork/back.png");
@@ -645,9 +662,9 @@ void KlondikeView::_LoadBitmaps()
 	fFanfare = _LoadSound("Artwork/fanfare.wav");
 	
 	// cache multiple backs in a row
-	for(short i = 1; i < CACHED_BACKS; i++) {
-		fBack[i] = new BBitmap(BRect(0, 0, CARD_WIDTH-1, CARD_HEIGHT + i*15),
-			fBack[0]->ColorSpace(), true);
+	for (short i = 1; i < CACHED_BACKS; i++) {
+		fBack[i] = new BBitmap(BRect(0, 0, CARD_WIDTH - 1,
+			CARD_HEIGHT + i * 15), fBack[0]->ColorSpace(), true);
 		
 		BView* fBackView = new BView(fBack[i]->Bounds(), NULL, 0, 0);
 		BRect destRect = fBack[0]->Bounds();
@@ -656,13 +673,13 @@ void KlondikeView::_LoadBitmaps()
 		
 		fBackView->SetDrawingMode(B_OP_COPY);
 		fBackView->DrawBitmap(fBack[0], destRect);
-		destRect.top = i*15;
+		destRect.top = i * 15;
 		destRect.bottom = destRect.top + CARD_HEIGHT;
 		fBackView->DrawBitmap(fBack[0], destRect);
 		
 		fBackView->SetDrawingMode(B_OP_ALPHA);
-		for(short j = 0; j < i+1; j++) {
-			destRect.top = j*15;
+		for (short j = 0; j < i + 1; j++) {
+			destRect.top = j * 15;
 			destRect.bottom = destRect.top + CARD_HEIGHT;
 			fBackView->DrawBitmap(fBack[0], destRect);
 		}
@@ -676,19 +693,20 @@ void KlondikeView::_LoadBitmaps()
 
 card* KlondikeView::_PickRandomCard()
 {
-	for(short i = 0; i < CARDS_IN_PLAY; i++) {
-		if(fAllCards[i]->fInPlay == false) { // if card not in play
-			fAllCards[i]->fInPlay = true; // move card into play
-			return fAllCards[i]; // return that card
+	for (short i = 0; i < CARDS_IN_PLAY; i++) {
+		if (fAllCards[i]->fInPlay == false) {
+			fAllCards[i]->fInPlay = true;
+			return fAllCards[i];
 		}
 	}
+
 	printf("Error: ran out of cards to deal!\n");
-	return NULL; // no card found
+	return NULL;
 }
 
 
 void KlondikeView::_AddCardToPile(int pile, card* cardToAdd) {
-	if(fBoard[pile] == NULL) {
+	if (fBoard[pile] == NULL) {
 		fBoard[pile] = cardToAdd;
 	} else {
 		cardToAdd->fPrevCard = _FindLastUsed(pile);
@@ -698,9 +716,11 @@ void KlondikeView::_AddCardToPile(int pile, card* cardToAdd) {
 
 
 void KlondikeView::_RemoveCardFromPile(int pile, card* cardToRemove) {
-	if(fBoard[pile] == cardToRemove) { // first in pile
+	if (fBoard[pile] == cardToRemove) {
+		// first in pile
 		fBoard[pile] = NULL;
-	} else { // second or later in pile
+	} else {
+		// second or later in pile
 		cardToRemove->fPrevCard->fNextCard = NULL;
 		cardToRemove->fPrevCard = NULL;
 	}
@@ -716,10 +736,10 @@ void KlondikeView::_GenerateBoard()
 	for (short i = 0; i < CARDS_IN_PLAY; i++) {
 		orderedCards[i] = new card();
 		orderedCards[i]->fValue = i % CARDS_IN_SUIT; // A->K, repeat
-		orderedCards[i]->fColor = (i/CARDS_IN_SUIT) % 4;
+		orderedCards[i]->fColor = (i / CARDS_IN_SUIT) % 4;
 		
-		if (orderedCards[i]->fColor == 1 ||
-			orderedCards[i]->fColor == 3)
+		if (orderedCards[i]->fColor == 1
+			|| orderedCards[i]->fColor == 3)
 			orderedCards[i]->fIsColorRed = true;
 		else
 			orderedCards[i]->fIsColorRed = false;
@@ -732,16 +752,16 @@ void KlondikeView::_GenerateBoard()
 	}
 	
 	// randomize order of card array
-	for(short cardsLeft = CARDS_IN_PLAY; cardsLeft > 0; cardsLeft--) {
-		// random number between 0 and (52, 51, 50, ...)
+	for (short cardsLeft = CARDS_IN_PLAY; cardsLeft > 0; cardsLeft--) {
 		short randomCard = rand() % cardsLeft;
+			// random number between 0 and (52, 51, 50, ...)
 		
 		// move card to actual deck
-		if(fAllCards[cardsLeft-1] != NULL) delete fAllCards[cardsLeft-1];
-		fAllCards[cardsLeft-1] = orderedCards[randomCard];
+		if (fAllCards[cardsLeft - 1] != NULL) delete fAllCards[cardsLeft - 1];
+		fAllCards[cardsLeft - 1] = orderedCards[randomCard];
 		
+		orderedCards[randomCard] = orderedCards[cardsLeft - 1];
 		// replace picked card with card at back of deck
-		orderedCards[randomCard] = orderedCards[cardsLeft-1];
 	}
 
 	fWasteCard = -1;
@@ -759,16 +779,18 @@ void KlondikeView::_GenerateBoard()
 
 	short cardsOnPile = 1;
 	for (short i = 0; i != 7; i++) {
-		fBoard[i] = NULL; // clear
+		fBoard[i] = NULL;
+			// clear
 		short j = cardsOnPile;
-		for(; j > 0; j--) { // for each card
-			// pick a random next card, and add it
+		for (; j > 0; j--) {
+			// for each card
 			_AddCardToPile(i, _PickRandomCard());
+				// pick a random next card, and add it
 		}
 		cardsOnPile++;
-		// at the last card, show it
 		card* lastCard = _FindLastUsed(i);
 		lastCard->fRevealed = true;
+			// at the last card, show it
 	}
 	
 	for (short i = 0; i != 24; i++) {
@@ -777,6 +799,7 @@ void KlondikeView::_GenerateBoard()
 
 	fShuffle->StartPlaying();
 }
+
 
 void KlondikeView::_CheckBoard() {
 	for (short i = 0; i < 4; i++) {
@@ -872,7 +895,7 @@ bool KlondikeView::_MoveWasteToFoundations() {
 				while (fWasteCard != -1 && fStock[fWasteCard]->fRevealed)
 					fWasteCard--;
 				fPoints += 10;
-									
+
 				break;
 			}
 		}
@@ -908,9 +931,9 @@ bool KlondikeView::_MoveWasteToFoundations() {
 
 card* KlondikeView::_FindLastUsed(short stock) {
 	card* currentCard = fBoard[stock];
-	if(currentCard == NULL)
+	if (currentCard == NULL)
 		return NULL;
-	while(currentCard->fNextCard != NULL)
+	while (currentCard->fNextCard != NULL)
 		currentCard = currentCard->fNextCard;
 
 	return currentCard;

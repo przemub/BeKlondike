@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Przemysław Buczkowski <przemub@przemub.pl>
+ * Copyright 2013-2014 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
 #ifndef _KLONDIKEAPPLICATION_H_
@@ -14,12 +14,12 @@ class KlondikeWindow;
 
 class KlondikeApplication : public BApplication {
 public:
-	KlondikeApplication();
+					KlondikeApplication();
 
-	virtual void AboutRequested();
+	virtual void 	AboutRequested();
 
 private:
-	KlondikeWindow* fWindow;
+	KlondikeWindow*	fWindow;
 };
 
 

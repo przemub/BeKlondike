@@ -1,9 +1,10 @@
 /*
- * Copyright 2013-14 Przemysław Buczkowski <przemub@przemub.pl>
+ * Copyright 2013-2014 Przemysław Buczkowski <przemub@przemub.pl>
  * All rights reserved. Distributed under the terms of the MIT license.
  */
 #ifndef _KLONDIKEWINDOW_H_
 #define _KLONDIKEWINDOW_H__
+
 
 #include "KlondikeView.h"
 
@@ -18,15 +19,16 @@ const int32 kAutoMoveMessage = 'Auto';
 
 class KlondikeWindow : public BWindow {
 public:
-	KlondikeWindow(BRect frame, const char* title);
+							KlondikeWindow(BRect frame, const char* title);
 
-	virtual void MessageReceived(BMessage* message);
-	virtual void FrameResized(float newWidth, float newHeight);
+	virtual	void 			MessageReceived(BMessage* message);
+	virtual	void	 		FrameResized(float newWidth, float newHeight);
 
 private:
-	BMenuBar* _CreateMenuBar();
+			BMenuBar* 		_CreateMenuBar();
 
-	KlondikeView* fView;
+			KlondikeView*	fView;
 };
+
 
 #endif	// _KLONDIKEWINDOW_H_
