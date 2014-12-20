@@ -67,12 +67,9 @@ void KlondikeView::Draw(BRect rect)
 	
 	// stock
 	int revealed = 0;
-	int lastRevealed = 0;
 	for (short i = 0; i < 24; i++)
-		if (fStock[i]->fRevealed) {
+		if (fStock[i]->fRevealed)
 			revealed++;
-			lastRevealed = i;	
-		}
 	
 	if (revealed < 24)
 		DrawBitmap(fBack[0], BRect(hSpacing, 15, hSpacing + CARD_WIDTH, 15 + CARD_HEIGHT));
@@ -614,7 +611,7 @@ BSimpleGameSound* KlondikeView::_LoadSound(const char* resourceName)
 	
 	status_t status = sound->InitCheck();
 	if (status != B_OK) {
-		printf("Error loading sound resource: %s. Error code: %d\n",
+		printf("Error loading sound resource: %s. Error code: %ld\n",
 			resourceName, status);
 	}
 		
@@ -894,7 +891,6 @@ bool KlondikeView::_MoveWasteToFoundations() {
 	if (foundation == -1)
 		return false;
 	
-	fprintf(stderr, "%d\n", value - fFoundations[foundation]);
 	if (value - fFoundations[foundation] == 1) {
 		currentCard->fRevealed = true;
 		fWasteCard--;
