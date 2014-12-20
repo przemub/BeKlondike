@@ -460,8 +460,9 @@ void KlondikeView::MouseUp(BPoint point)
 		
 
 		else if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL ||
-				_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1) &&
-				fIsCardPicked) {
+				(_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1 &&
+				_FindLastUsed(stack)->fIsColorRed != fPickedCard->fIsColorRed))
+				&& fIsCardPicked) {
 			// attach to stack, only kings on empty fields
 			if (!(fPickedCard-> fValue != 12 && fBoard[stack] == NULL)) {
 				_AddCardToPile(stack, fPickedCard);
