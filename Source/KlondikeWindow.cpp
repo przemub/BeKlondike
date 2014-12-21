@@ -25,7 +25,7 @@ KlondikeWindow::KlondikeWindow(BRect frame, const char* title)
 	fView = new KlondikeView();
 	fView->SetAutoPlay(true, false);
 	
-	SetPulseRate(500000);
+	SetPulseRate(200000);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 1)
 		.Add(_CreateMenuBar())

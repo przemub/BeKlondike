@@ -58,7 +58,8 @@ public:
 			void				NewGame();
 			void				Cheat();
 			void				SetAutoPlay(bool enabled, bool quick);
-			bool				MoveOneToFoundation();
+			bool				MoveOneToFoundation(short stack = 0,
+									short endStack = 6);
 			void				Resize(float newWidth, float newHeight);
 			void				CheckBoard();
 
@@ -108,6 +109,8 @@ private:
 
 			bool				fAutoPlayEnabled;
 			bool				fQuickAutoPlay;
+			short				fDoubleClick;
+			short				fAutoPlayCountdown;
 
 			int					fPoints;
 };

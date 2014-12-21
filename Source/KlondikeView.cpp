@@ -243,13 +243,24 @@ void KlondikeView::Draw(BRect rect)
 
 void KlondikeView::Pulse()
 {
+	if (fDoubleClick > -1)
+		fDoubleClick--;
+	
 	if (fAutoPlayStarted) {
+		if (fAutoPlayCountdown > -1) {
+			fAutoPlayCountdown--;
+			return;
+		}
+
 		if (!MoveOneToFoundation()) {
 			fAutoPlayStarted = false;
 			CheckBoard();
 		}
 		Invalidate();
-	}
+		
+		fAutoPlayCountdown = 1;
+	} else
+		fAutoPlayCountdown = -1;
 }
 
 
@@ -318,9 +329,21 @@ void KlondikeView::MouseDown(BPoint point)
 	}
 	
 	// pick up a card from waste
-	if (stack == 1 && point.y < 15 + CARD_HEIGHT) {
+	if (stack == 1 && point.y < 15 + CARD_HEIGHT) {		
 		if (fWasteCard == -1)
 			return;
+		
+		if (fDoubleClick == -1)
+			fDoubleClick = 1;
+		else if (fDoubleClick > -1) {
+			_MoveWasteToFoundation();
+			
+			CheckBoard();	
+			Invalidate();
+			fDoubleClick = -1;
+			
+			return;
+		}
 		
 		card* picked = fStock[fWasteCard];
 		fPickedCard = picked;
@@ -390,6 +413,18 @@ void KlondikeView::MouseDown(BPoint point)
 		if (picked->fNextCard == NULL) {
 			// on last card, if below than not clicking on card
 			if (point.y - 18 * cardNumber - CARD_HEIGHT - 15 >= CARD_HEIGHT) {
+				return;
+			}
+			
+			if (fDoubleClick == -1)
+				fDoubleClick = 1;
+			else if (fDoubleClick > -1 && fAutoPlayEnabled) {
+				MoveOneToFoundation(stack, stack);
+				
+				CheckBoard();	
+				Invalidate();
+				fDoubleClick = -1;
+				
 				return;
 			}
 		}
@@ -470,7 +505,7 @@ void KlondikeView::MouseUp(BPoint point)
 		int hSpacing = _CardHSpacing();
 		short stack = (int)((point.x - hSpacing) / (CARD_WIDTH + hSpacing));
 
-		if (stack >= 3 && stack < 7 && point.y < 18 + CARD_HEIGHT) {
+		if (stack >= 3 && stack < 7 && point.y < 15 + CARD_HEIGHT) {
 			short foundation = stack - 3;
 			
 			if (fPickedCard->fValue == 0)
@@ -493,7 +528,8 @@ void KlondikeView::MouseUp(BPoint point)
 		else if (stack >= 0 && stack < 7 && (_FindLastUsed(stack) == NULL
 			|| (_FindLastUsed(stack)->fValue - fPickedCard->fValue == 1
 			&& _FindLastUsed(stack)->fIsColorRed
-			!= fPickedCard->fIsColorRed)) && fIsCardPicked) {
+			!= fPickedCard->fIsColorRed)) && fIsCardPicked
+			&& point.y > 2 * 15 + CARD_HEIGHT) {
 			// attach to stack, only kings on empty fields
 			if (!(fPickedCard-> fValue != 12 && fBoard[stack] == NULL)) {
 				_AddCardToPile(stack, fPickedCard);
@@ -798,6 +834,8 @@ void KlondikeView::_GenerateBoard()
 	fMouseLock = false;
 	fWon = false;
 	fAutoPlayStarted = false;
+	fDoubleClick = -1;
+	fAutoPlayCountdown = -1;
 	
 	for (short i = 0; i < 4; i++) {
 		fFoundations[i] = -1;
@@ -843,14 +881,14 @@ void KlondikeView::CheckBoard() {
 }
 
 
-bool KlondikeView::MoveOneToFoundation() {
+bool KlondikeView::MoveOneToFoundation(short stack = 0, short endStack = 6) {
 	if (!fAutoPlayEnabled)
 		return false;
 	
 	if(_MoveWasteToFoundation())
 		return true;
 	
-	for (short i = 0; i < 7; i++) {
+	for (short i = stack; i <= endStack; i++) {
 		if (fBoard[i] == NULL)
 			continue;
 		
