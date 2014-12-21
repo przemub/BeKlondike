@@ -243,7 +243,13 @@ void KlondikeView::Draw(BRect rect)
 
 void KlondikeView::Pulse()
 {
-	;
+	if (fAutoPlayStarted) {
+		if (!MoveOneToFoundation()) {
+			fAutoPlayStarted = false;
+			CheckBoard();
+		}
+		Invalidate();
+	}
 }
 
 
@@ -265,7 +271,22 @@ void KlondikeView::MouseDown(BPoint point)
 	GetMouse(&point, &mouse);
 	
 	if (mouse == B_SECONDARY_MOUSE_BUTTON) {
-		MoveAllToFoundations();
+		// stop auto-play if it's started
+		if (fAutoPlayStarted) {
+			fAutoPlayStarted = false;
+			return;
+		}
+		
+		if (fQuickAutoPlay) {
+			while(MoveOneToFoundation());
+			
+			Invalidate();
+			CheckBoard();
+		}
+		else {
+			fAutoPlayStarted = true;
+		}
+		
 		return;
 	}
 
@@ -463,7 +484,7 @@ void KlondikeView::MouseUp(BPoint point)
 				
 				fPoints += 10;
 				
-				_CheckBoard();
+				CheckBoard();
 			} else
 				_AddCardToPile(fPickedCardBoardPos, fPickedCard);
 		}
@@ -519,7 +540,7 @@ void KlondikeView::MouseUp(BPoint point)
 				
 				fPoints += 10;
 				
-				_CheckBoard();
+				CheckBoard();
 			}
 		}
 		
@@ -579,6 +600,12 @@ void KlondikeView::NewGame()
 }
 
 
+void KlondikeView::SetAutoPlay(bool enabled, bool quick) {
+	fAutoPlayEnabled = enabled;
+	fQuickAutoPlay = quick;
+}
+
+
 int KlondikeView::_CardHSpacing()
 {
 	return((windowWidth - (CARD_WIDTH * 7)) / 8);
@@ -601,7 +628,7 @@ void KlondikeView::Cheat() {
 	
 	Invalidate();
 	
-	_CheckBoard();
+	CheckBoard();
 }
 
 
@@ -770,6 +797,7 @@ void KlondikeView::_GenerateBoard()
 	fIsWasteCardPicked = false;
 	fMouseLock = false;
 	fWon = false;
+	fAutoPlayStarted = false;
 	
 	for (short i = 0; i < 4; i++) {
 		fFoundations[i] = -1;
@@ -802,7 +830,7 @@ void KlondikeView::_GenerateBoard()
 }
 
 
-void KlondikeView::_CheckBoard() {
+void KlondikeView::CheckBoard() {
 	for (short i = 0; i < 4; i++) {
 		if (fFoundations[i] < 12)
 			return;
@@ -815,68 +843,65 @@ void KlondikeView::_CheckBoard() {
 }
 
 
-void KlondikeView::MoveAllToFoundations() {
-	bool found;
+bool KlondikeView::MoveOneToFoundation() {
+	if (!fAutoPlayEnabled)
+		return false;
 	
-	do {
-		found = _MoveWasteToFoundations();	
+	if(_MoveWasteToFoundation())
+		return true;
+	
+	for (short i = 0; i < 7; i++) {
+		if (fBoard[i] == NULL)
+			continue;
 		
-		for (short i = 0; i < 7; i++) {
-			if (fBoard[i] == NULL)
-				continue;
-			
-			card* currentCard = _FindLastUsed(i);
-			short color = currentCard->fColor;
-			short value = currentCard->fValue;
-			short foundation = -1;
-			
-			if (value == 0) {
-				for (short j = 0; j < 4; j++) {
-					if (fFoundationsColors[j] == -1) {
-						fFoundationsColors[j] = color;
-						fFoundations[j] = 0;
-						
-						if (currentCard->fPrevCard != NULL)
-							currentCard->fPrevCard->fRevealed = true;
-						_RemoveCardFromPile(i, currentCard);
-						fPoints += 10;
-						found = true;
-						
-						break;
-					}
-				}
-				
-				continue;
-			}
-			
+		card* currentCard = _FindLastUsed(i);
+		short color = currentCard->fColor;
+		short value = currentCard->fValue;
+		short foundation = -1;
+		
+		if (value == 0) {
 			for (short j = 0; j < 4; j++) {
-				if (fFoundationsColors[j] == color) {
-					foundation = j;
+				if (fFoundationsColors[j] == -1) {
 					fFoundationsColors[j] = color;
-					break;
+					fFoundations[j] = 0;
+					
+					if (currentCard->fPrevCard != NULL)
+						currentCard->fPrevCard->fRevealed = true;
+					_RemoveCardFromPile(i, currentCard);
+					fPoints += 10;
+					return true;
 				}
 			}
-					
-			if (foundation == -1)
-				continue;
 			
-			if (value - fFoundations[foundation] == 1) {
-				if (currentCard->fPrevCard != NULL)
-					currentCard->fPrevCard->fRevealed = true;
-				_RemoveCardFromPile(i, currentCard);
-				fFoundations[foundation]++;
-				fPoints += 10;
-				found = true;
+			continue;
+		}
+		
+		for (short j = 0; j < 4; j++) {
+			if (fFoundationsColors[j] == color) {
+				foundation = j;
+				fFoundationsColors[j] = color;
+				break;
 			}
 		}
-	} while (found);
+				
+		if (foundation == -1)
+			continue;
+		
+		if (value - fFoundations[foundation] == 1) {
+			if (currentCard->fPrevCard != NULL)
+				currentCard->fPrevCard->fRevealed = true;
+			_RemoveCardFromPile(i, currentCard);
+			fFoundations[foundation]++;
+			fPoints += 10;
+			return true;
+		}
+	}
 	
-	_CheckBoard();
-	Invalidate();
+	return false;
 }
 
 
-bool KlondikeView::_MoveWasteToFoundations() {
+bool KlondikeView::_MoveWasteToFoundation() {
 	if (fWasteCard == -1)
 		return false;
 	

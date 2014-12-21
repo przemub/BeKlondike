@@ -14,7 +14,11 @@
 
 const int32 kNewGameMessage = 'NewG';
 const int32 kCheatMessage = 'Chtr';
-const int32 kAutoMoveMessage = 'Auto';
+const int32 kAutoPlayMessage = 'Auto';
+const int32 kAutoPlayEnableMessage = 'EAut';
+const int32 kQuickAutoPlayMessage = 'QAut';
+
+
 
 
 class KlondikeWindow : public BWindow {
@@ -28,6 +32,12 @@ private:
 			BMenuBar* 		_CreateMenuBar();
 
 			KlondikeView*	fView;
+			
+			BMenuItem*		fAutoPlayItem;
+			bool			fAutoPlayEnabled;
+			BMenuItem*		fAutoPlayEnabledItem;
+			bool			fQuickAutoPlay;
+			BMenuItem*		fQuickAutoPlayItem;
 };
 
 

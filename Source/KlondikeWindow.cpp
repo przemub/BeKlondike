@@ -23,6 +23,7 @@ KlondikeWindow::KlondikeWindow(BRect frame, const char* title)
 	B_QUIT_ON_WINDOW_CLOSE)
 {
 	fView = new KlondikeView();
+	fView->SetAutoPlay(true, false);
 	
 	SetPulseRate(500000);
 
@@ -47,8 +48,36 @@ void KlondikeWindow::MessageReceived(BMessage* message)
 	case kCheatMessage:
 		fView->Cheat();
 		break;
-	case kAutoMoveMessage:
-		fView->MoveAllToFoundations();
+	case kAutoPlayMessage:
+		// stop auto-play if it's started
+		if (fView->fAutoPlayStarted) {
+			fView->fAutoPlayStarted = false;
+			break;
+		}
+		
+		if (fQuickAutoPlay) {
+			while(fView->MoveOneToFoundation());
+			
+			fView->Invalidate();
+			fView->CheckBoard();
+		}
+		else
+			fView->fAutoPlayStarted = true;
+		
+		break;
+	case kAutoPlayEnableMessage:
+		fAutoPlayEnabled = !fAutoPlayEnabled;
+		fAutoPlayEnabledItem->SetMarked(fAutoPlayEnabled);
+		
+		fQuickAutoPlayItem->SetEnabled(fAutoPlayEnabled);
+		fAutoPlayItem->SetEnabled(fAutoPlayEnabled);
+		
+		fView->SetAutoPlay(fAutoPlayEnabled, fQuickAutoPlay);
+		break;
+	case kQuickAutoPlayMessage:
+		fQuickAutoPlay = !fQuickAutoPlay;
+		fQuickAutoPlayItem->SetMarked(fQuickAutoPlay);
+		fView->SetAutoPlay(fAutoPlayEnabled, fQuickAutoPlay);
 		break;
 	case 'DATA':
 		if (message->WasDropped()) {
@@ -84,16 +113,27 @@ BMenuBar* KlondikeWindow::_CreateMenuBar()
 	mGame->AddItem(about);
 	mGame->AddSeparatorItem();
 	
-	menuItem = new BMenuItem(B_TRANSLATE("Auto-move"),
-		new BMessage(kAutoMoveMessage));
-	menuItem->SetShortcut('A', B_COMMAND_KEY);
-	mGame->AddItem(menuItem);
+	fAutoPlayItem = new BMenuItem(B_TRANSLATE("Auto-play (RMB)"),
+		new BMessage(kAutoPlayMessage));
+	mGame->AddItem(fAutoPlayItem);
 	mGame->AddSeparatorItem();
 	
 	menuItem = new BMenuItem(B_TRANSLATE_CONTEXT("Quit", "Menu bar"),
 		new BMessage(B_QUIT_REQUESTED));
 	menuItem->SetShortcut('Q', B_COMMAND_KEY);
 	mGame->AddItem(menuItem);
+	
+	fAutoPlayEnabledItem = new BMenuItem(B_TRANSLATE("Auto-play"),
+		new BMessage(kAutoPlayEnableMessage));
+	fAutoPlayEnabledItem->SetMarked(true);
+	mOptions->AddItem(fAutoPlayEnabledItem);
+	fAutoPlayEnabled = true;
+	
+	fQuickAutoPlayItem = new BMenuItem(B_TRANSLATE("Quick auto-play"),
+		new BMessage(kQuickAutoPlayMessage));
+	mOptions->AddItem(fQuickAutoPlayItem);
+	mOptions->AddSeparatorItem();
+	fQuickAutoPlay = false;
 	
 	menuItem = new BMenuItem(B_TRANSLATE("Cheat!"),
 		new BMessage(kCheatMessage));

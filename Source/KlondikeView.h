@@ -57,15 +57,20 @@ public:
 
 			void				NewGame();
 			void				Cheat();
-			void				MoveAllToFoundations();
+			void				SetAutoPlay(bool enabled, bool quick);
+			bool				MoveOneToFoundation();
 			void				Resize(float newWidth, float newHeight);
+			void				CheckBoard();
+
+			
+			bool				fAutoPlayStarted;
+
 
 private:
 			BSimpleGameSound*	_LoadSound(const char* resourceName);
 			void				_LoadBitmaps();
 			void				_GenerateBoard();
-			void				_CheckBoard();
-			bool				_MoveWasteToFoundations();
+			bool				_MoveWasteToFoundation();
 			int					_CardHSpacing();
 			card*				_FindLastUsed(short stock);
 			card*				_PickRandomCard();
@@ -100,6 +105,9 @@ private:
 			card*				fPickedCard;
 			bool				fIsCardPicked;
 			bool				fMouseLock;
+
+			bool				fAutoPlayEnabled;
+			bool				fQuickAutoPlay;
 
 			int					fPoints;
 };
